@@ -1,5 +1,5 @@
 
-from regexapp.main import Cli
+from regexpro.main import Cli
 
 console = Cli()
 console.run()

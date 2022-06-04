@@ -5,7 +5,7 @@ try:
 except ModuleNotFoundError:
     import sys
     from platform import python_version as py_version
-    items = ["Failed to launch RegexApp application because",
+    items = ["Failed to launch RegexPro application because",
              "Python{} binary doesn't have tkinter module.".format(py_version()),
              "Please install tkinter module and try it again."]
     max_len = max(len(item) for item in items)
@@ -23,15 +23,15 @@ from tkinter.font import Font
 from pathlib import Path
 import webbrowser
 from textwrap import dedent
-from regexapp import RegexBuilder
-from regexapp.collection import REF
-from regexapp.collection import PatternReference
-from regexapp import version
-from regexapp import edition
-from regexapp.core import enclose_string
-from regexapp import PatternBuilder
+from regexpro import RegexBuilder
+from regexpro.collection import REF
+from regexpro.collection import PatternReference
+from regexpro import version
+from regexpro import edition
+from regexpro.core import enclose_string
+from regexpro import PatternBuilder
 
-from regexapp.config import Data
+from regexpro.config import Data
 
 import yaml
 import re
@@ -248,7 +248,7 @@ class Application:
         self.PanedWindow = ttk.PanedWindow
 
         # tkinter root
-        self._base_title = 'Regexapp {}'.format(edition)
+        self._base_title = 'Regex {}'.format(edition)
         self.root = tk.Tk()
         self.root.geometry('1000x600+100+100')
         self.root.minsize(200, 200)

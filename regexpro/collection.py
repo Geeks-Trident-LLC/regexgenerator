@@ -7,13 +7,13 @@ from textwrap import dedent
 from pathlib import Path, PurePath
 from copy import copy
 
-from regexapp.exceptions import EscapePatternError
-from regexapp.exceptions import PatternReferenceError
-from regexapp.exceptions import TextPatternError
-from regexapp.exceptions import ElementPatternError
-from regexapp.exceptions import LinePatternError
-from regexapp.exceptions import MultilinePatternError
-from regexapp.exceptions import PatternBuilderError
+from regexpro.exceptions import EscapePatternError
+from regexpro.exceptions import PatternReferenceError
+from regexpro.exceptions import TextPatternError
+from regexpro.exceptions import ElementPatternError
+from regexpro.exceptions import LinePatternError
+from regexpro.exceptions import MultilinePatternError
+from regexpro.exceptions import PatternBuilderError
 
 import logging
 logger = logging.getLogger(__file__)
@@ -135,7 +135,7 @@ class PatternReference(dict):
     # regexp pattern - from system references
     sys_ref_loc = str(PurePath(Path(__file__).parent, 'system_references.yaml'))
     # regex patterns - from user references
-    user_ref_loc = str(PurePath(Path.home(), '.regexapp', 'user_references.yaml'))
+    user_ref_loc = str(PurePath(Path.home(), '.regexpro', 'user_references.yaml'))
 
     def __init__(self):
         super().__init__()

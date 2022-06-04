@@ -2,12 +2,12 @@ import pytest       # noqa
 import re
 from textwrap import dedent
 
-from regexapp import PatternReference
-from regexapp import TextPattern
-from regexapp import ElementPattern
-from regexapp import LinePattern
-from regexapp import PatternBuilder
-from regexapp import MultilinePattern
+from regexpro import PatternReference
+from regexpro import TextPattern
+from regexpro import ElementPattern
+from regexpro import LinePattern
+from regexpro import PatternBuilder
+from regexpro import MultilinePattern
 
 
 class TestPatternReference:
