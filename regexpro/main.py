@@ -10,9 +10,10 @@ from regexpro.application import Application
 from regexpro import RegexBuilder
 from regexpro.core import enclose_string
 
-from regexpro.utils import Printer
-
-from regexpro.constant import ECODE
+# from regexpro.utils import Printer
+# from regexpro.constant import ECODE
+from genericlib import Printer
+from genericlib import ECODE
 
 
 def run_gui_application(options):
