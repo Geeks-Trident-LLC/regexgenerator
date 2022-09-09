@@ -269,7 +269,8 @@ words:
 mixed_word:
   group: word
   description: a pattern to match a mixed word that might include a punctuation.
-  pattern: "\\S*[a-zA-Z0-9]\\S*"
+  # pattern: "\\S*[a-zA-Z0-9]\\S*"
+  pattern: '[\x21-\x7e]+'
   positive test:
     pattern matches a mixed word: "abc@xyz.com"
   negative test:
@@ -278,7 +279,8 @@ mixed_word:
 mixed_words:
   group: word
   description: a pattern to match at least one mixed word.
-  pattern: "\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)*"
+  # pattern: "\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)*"
+  pattern: '[\x21-\x7e]+( +[\x21-\x7e]+)*'
   positive test:
     pattern match mixed words: "email: abc@xyz.com"
   negative test:
@@ -295,8 +297,8 @@ phrase:
 
 mixed_phrase:
   group: word
-  description: a pattern to match a mixed pharse.
-  pattern: "\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)+"
+  description: a pattern to match a mixed phrase.
+  pattern: '[\x21-\x7e]+( +[\x21-\x7e]+)+'
   positive test:
     pattern match a mixed phrase: "email: abc@xyz.com"
   negative test:
