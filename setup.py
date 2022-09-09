@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='regexpro',
-    version='0.3.8',
+    version='0.3.9',
     license='Geeks Trident License',
     license_files=['LICENSE'],
     description='The application to generate regex pattern.',
