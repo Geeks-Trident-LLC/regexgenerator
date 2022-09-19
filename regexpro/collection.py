@@ -813,13 +813,19 @@ class ElementPattern(str):
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
-                    repeating_space_pat = r'repeat(?:s|ing|tion)?(_[0-9_]+)_spaces?$'
+                    repeating_space_pat = r'repeat(?:s|ing)?(_[0-9_]+)_spaces?$'
+                    occurring_space_pat = r'((at_(least|most)_)?\d+(_occurrences?)?)_spaces?$'
                     if case == 'empty':
                         is_empty = True
                         cls._or_empty = is_empty
                     elif re.match(repeating_space_pat, case, flags=re.I):
-                        new_case1 = re.sub(repeating_space_pat, r'repetition\1', case)
-                        pat = cls('space(%s)' % new_case1)
+                        r_case = re.sub(repeating_space_pat, r'repetition\1', case.lower())
+                        pat = cls('space(%s)' % r_case)
+                        pat not in lst and lst.append(pat)
+                    elif re.match(occurring_space_pat, case, flags=re.I):
+                        o_case = re.sub(occurring_space_pat, r'\1', case.lower())
+                        o_case = o_case if 'occurrence' in o_case else '%s_occurrence' % o_case
+                        pat = cls('space(%s)' % o_case)
                         pat not in lst and lst.append(pat)
                     else:
                         if case in REF:

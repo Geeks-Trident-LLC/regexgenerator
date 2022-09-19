@@ -283,6 +283,20 @@ class TestElementPattern:
             ('word(1_group_occurrence)', '[a-zA-Z0-9]+( +[a-zA-Z0-9]+)'),
             ('word(3_group_occurrence)', '[a-zA-Z0-9]+( +[a-zA-Z0-9]+){3}'),
             ####################################################################
+            # alternative or_ for repeating or occurring space                 #
+            ####################################################################
+            ('word(var_v1, or_repeating_5_space)', '(?P<v1>[a-zA-Z0-9]+| {5})'),
+            ('word(var_v1, or_repeat_5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {5})'),
+            ('word(var_v1, or_repeats_5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {5})'),
+            ('word(var_v1, or_repeating_2_5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {2,5})'),
+            ('word(var_v1, or_repeating__5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {,5})'),
+            ('word(var_v1, or_at_least_5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {5,})'),
+            ('word(var_v1, or_at_most_5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {,5})'),
+            ('word(var_v1, or_5_spaces)', '(?P<v1>[a-zA-Z0-9]+| {5})'),
+            ('word(var_v1, or_at_least_5_occurrences_spaces)', '(?P<v1>[a-zA-Z0-9]+| {5,})'),
+            ('word(var_v1, or_at_most_5_occurrences_spaces)', '(?P<v1>[a-zA-Z0-9]+| {,5})'),
+            ('word(var_v1, or_5_occurrences_spaces)', '(?P<v1>[a-zA-Z0-9]+| {5})'),
+            ####################################################################
             # choice keyword test                                              #
             ####################################################################
             ('choice(up, down, administratively down)', '(up|down|(administratively down))'),
