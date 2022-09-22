@@ -776,6 +776,8 @@ class ElementPattern(str):
         tail = ''
         is_repeated = False
         is_occurrence = False
+        is_or_either = False
+        spaces_occurrence_pat = ''
 
         for arg in arguments:
             match = re.match(vpat, arg, flags=re.I)
@@ -813,20 +815,21 @@ class ElementPattern(str):
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
-                    repeating_space_pat = r'repeat(?:s|ing)?(_[0-9_]+)_spaces?$'
-                    occurring_space_pat = r'((at_(least|most)_)?\d+(_occurrences?)?)_spaces?$'
+                    repeating_space_pat = r'(?:either_)?repeat(?:s|ing)?(_[0-9_]+)_spaces?$'
+                    occurring_space_pat = r'(?:either_)?((at_(least|most)_)?\d+(_occurrences?)?)_spaces?$'
+
                     if case == 'empty':
                         is_empty = True
                         cls._or_empty = is_empty
                     elif re.match(repeating_space_pat, case, flags=re.I):
                         r_case = re.sub(repeating_space_pat, r'repetition\1', case.lower())
-                        pat = cls('space(%s)' % r_case)
-                        pat not in lst and lst.append(pat)
+                        spaces_occurrence_pat = cls('space(%s)' % r_case)
+                        is_or_either = str.lower(case).startswith('either_')
                     elif re.match(occurring_space_pat, case, flags=re.I):
                         o_case = re.sub(occurring_space_pat, r'\1', case.lower())
                         o_case = o_case if 'occurrence' in o_case else '%s_occurrence' % o_case
-                        pat = cls('space(%s)' % o_case)
-                        pat not in lst and lst.append(pat)
+                        spaces_occurrence_pat = cls('space(%s)' % o_case)
+                        is_or_either = str.lower(case).startswith('either_')
                     else:
                         if case in REF:
                             pat = REF.get(case).get('pattern')
@@ -844,6 +847,10 @@ class ElementPattern(str):
         pattern = cls.add_word_bound(
             pattern, word_bound=word_bound, added_parentheses=is_multiple
         )
+        if spaces_occurrence_pat:
+            fmt = '(%s)|( *%s *)' if is_or_either else '(%s)|(%s)'
+            pattern = fmt % (spaces_occurrence_pat, pattern)
+
         pattern = cls.add_var_name(pattern, name=name)
         pattern = cls.add_head_of_string(pattern, head=head)
         pattern = cls.add_tail_of_string(pattern, tail=tail)
