@@ -35,3 +35,11 @@ class PatternBuilderError(PatternError):
 
 class RegexBuilderError(Exception):
     """Use to capture error for RegexBuilder class."""
+
+
+class NoUserDataError(Exception):
+    """Use to capture error if there is no provided user data."""
+
+
+class NoTestDataError(Exception):
+    """Use to capture error if there is no provided test data."""
