@@ -103,3 +103,9 @@ class Data:
         with open(cls.system_reference_filename) as stream:
             content = stream.read()
             return content
+
+    @classmethod
+    def get_defined_symbols(cls):
+        with open(cls.symbol_reference_filename) as stream:
+            content = stream.read()
+            return content
