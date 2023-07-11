@@ -97,3 +97,9 @@ class Data:
             )
         )
         return dependencies
+
+    @classmethod
+    def get_app_keywords(cls):
+        with open(cls.system_reference_filename) as stream:
+            content = stream.read()
+            return content
