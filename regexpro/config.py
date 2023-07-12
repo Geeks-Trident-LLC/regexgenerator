@@ -76,8 +76,7 @@ class Data:
 
         {copyright_text} {company}.  All rights reserved.
 
-        Unauthorized copying of file, source, and binary forms without 
-        {company_name} permissions, via any medium is strictly prohibited.
+        Unauthorized copying of file, source, and binary forms without {company_name} permissions, via any medium is strictly prohibited.
 
         Proprietary and confidential.
 
