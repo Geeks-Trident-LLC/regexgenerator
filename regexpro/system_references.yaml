@@ -7,6 +7,13 @@ anything:
   positive test:
     pattern matches any character: "a"
 
+zero_or_anything:
+  group: character
+  description: a pattern to match zero or any character.
+  pattern: ".?"
+  positive test:
+    pattern matches zero or any character: "a"
+
 zoanything:
   group: character
   description: a pattern to match zero or any character.
@@ -37,6 +44,15 @@ space:
   negative test:
     the blank space pattern can not match data: "."
 
+zero_or_space:
+  group: tabulation
+  description: a pattern to match zero or blank space character.
+  pattern: " ?"
+  positive test:
+    pattern matches zero or blank space: " "
+  negative test:
+    zero or blank space pattern can not match data: "."
+
 zospace:
   group: tabulation
   description: a pattern to match zero or blank space character.
@@ -54,6 +70,15 @@ spaces:
     pattern match multiple blank space: "  "
   negative test:
     the multiple spaces pattern can not match data: "."
+
+zero_or_spaces:
+  group: tabulation
+  description: a pattern to match zero or multiple spaces.
+  pattern: " *"
+  positive test:
+    pattern match multiple blank space: "  "
+  negative test:
+    zero or multiple spaces pattern can not match data: "."
 
 zospaces:
   group: tabulation
@@ -73,6 +98,15 @@ non_space:
   negative test:
     the non-blank space pattern can not match data: "a"
 
+zero_or_non_space:
+  group: character
+  description: a pattern to match a zero or non-blank space character.
+  pattern: "[^ ]?"
+  positive test:
+    pattern matches a non-blank space: "\n"
+  negative test:
+    zero or non-blank space pattern can not match data: "a"
+
 zonon_space:
   group: character
   description: a pattern to match a zero or non-blank space character.
@@ -81,6 +115,15 @@ zonon_space:
     pattern matches a non-blank space: "\n"
   negative test:
     zero or non-blank space pattern can not match data: "a"
+
+zero_or_non_spaces:
+  group: character
+  description: a pattern to match zero or multiple non-blank space characters.
+  pattern: "[^ ]*"
+  positive test:
+    pattern match zero or multiple non-blank spaces: "\n"
+  negative test:
+    zero or multiple non-blank space pattern can not match data: "a"
 
 zonon_spaces:
   group: character
@@ -127,6 +170,15 @@ whitespace:
   negative test:
     the whitespace pattern can not match data: "."
 
+zero_or_whitespace:
+  group: tabulation
+  description: a pattern to match a word divider such as space, tab, newline, and more.
+  pattern: "\\s?"
+  positive test:
+    pattern matches zero or whitespace: " "
+  negative test:
+    zero or whitespace pattern can not match data: "."
+
 zowhitespace:
   group: tabulation
   description: a pattern to match a word divider such as space, tab, newline, and more.
@@ -135,6 +187,15 @@ zowhitespace:
     pattern matches zero or whitespace: " "
   negative test:
     zero or whitespace pattern can not match data: "."
+
+zero_or_whitespaces:
+  group: tabulation
+  description: a pattern to match zero or multiple word divider such as space, tab, newline, and more.
+  pattern: "\\s*"
+  positive test:
+    pattern match zero or multiple whitespaces: " "
+  negative test:
+    zero or multiple whitespace pattern can not match data: "."
 
 zowhitespaces:
   group: tabulation
@@ -163,6 +224,15 @@ non_whitespace:
   negative test:
     the non-whitespace pattern can not match data: " "
 
+zero_or_non_whitespace:
+  group: character
+  description: a pattern to match zero or any character which is not a white space character.
+  pattern: "\\S?"
+  positive test:
+    pattern matches zero or non-whitespace: "a"
+  negative test:
+    zero or non-whitespace pattern can not match data: " "
+
 zonon_whitespace:
   group: character
   description: a pattern to match zero or any character which is not a white space character.
@@ -180,6 +250,15 @@ non_whitespaces:
     pattern match multiple non-whitespace: "ab"
   negative test:
     the multiple non-whitespace pattern can not match data: " "
+
+zero_or_non_whitespaces:
+  group: character
+  description: a pattern to match zero or multiple characters which is not a white space character.
+  pattern: "\\S*"
+  positive test:
+    pattern match multiple non-whitespace: "ab"
+  negative test:
+    zero or multiple non-whitespace pattern can not match data: " "
 
 zonon_whitespaces:
   group: character
@@ -199,10 +278,28 @@ non_whitespaces_or_group:
   negative test:
     non-whitespaces or group of non-whitespaces pattern can not match data: " "
 
+non_whitespaces_or_igroup:
+  group: character
+  description: a pattern to match non-whitespaces or group of non-whitespaces.
+  pattern: "\\S+( +\\S)*"
+  positive test:
+    pattern match non-whitespaces or group of non-whitespaces: "ab"
+  negative test:
+    non-whitespaces or group of non-whitespaces pattern can not match data: " "
+
 non_whitespaces_group:
   group: character
   description: a pattern to match group of non-whitespaces.
   pattern: "\\S+( \\S)+"
+  positive test:
+    pattern match group of non-whitespaces: "ab"
+  negative test:
+    non-whitespaces or group of non-whitespaces pattern can not match data: " "
+
+non_whitespaces_igroup:
+  group: character
+  description: a pattern to match group of non-whitespaces.
+  pattern: "\\S+( +\\S)+"
   positive test:
     pattern match group of non-whitespaces: "ab"
   negative test:
@@ -218,11 +315,47 @@ punctuation:
   negative test:
     the punctuation pattern can not match data: "a"
 
+punct:
+  group: punctuation
+  description: a pattern to match a punctuation.
+  pattern: "[\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e]"
+  positive test:
+    pattern matches a punctuation: "."
+  negative test:
+    the punctuation pattern can not match data: "a"
+
 punctuations:
   group: punctuation
   description: a pattern to match multiple punctuation.
   pattern: |-
     [!\"#$%&\'()*+,-./:;<=>?@\[\\\]\^_`{|}~]+
+  positive test:
+    pattern match multiple punctuations: "."
+  negative test:
+    the punctuations pattern can not match data: "a"
+
+puncts:
+  group: punctuation
+  description: a pattern to match multiple punctuation.
+  pattern: "[\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e]+"
+  positive test:
+    pattern match multiple punctuations: "."
+  negative test:
+    the punctuations pattern can not match data: "a"
+
+puncts_or_group:
+  group: punctuation
+  description: a pattern to match group of multiple punctuation.
+  pattern: "[\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e]+( +[\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e])*"
+  positive test:
+    pattern match multiple punctuations: "."
+  negative test:
+    the punctuations pattern can not match data: "a"
+
+puncts_group:
+  group: punctuation
+  description: a pattern to match group of multiple punctuation.
+  pattern: "[\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e]+( +[\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e])+"
   positive test:
     pattern match multiple punctuations: "."
   negative test:
@@ -238,7 +371,25 @@ non_punctuation:
   negative test:
     the non-punctuation pattern can not match data: "."
 
+non_punct:
+  group: punctuation
+  description: a pattern to match a non-punctuation.
+  pattern: "[^\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e]"
+  positive test:
+    pattern matches a non-punctuation: "a"
+  negative test:
+    the non-punctuation pattern can not match data: "."
+
 non_punctuations:
+  group: punctuation
+  description: a pattern to match multiple non-punctuation.
+  pattern: "[^\x21-x2F\x3a-\x40\x5b-\x60\x7b-\x7e]+"
+  positive test:
+    pattern match multiple non-punctuation: "a"
+  negative test:
+    the multiple non-punctuation pattern can not match data: "."
+
+non_puncts:
   group: punctuation
   description: a pattern to match multiple non-punctuation.
   pattern: |-
@@ -275,6 +426,15 @@ word:
   negative test:
     the word pattern can not match data: "[...]"
 
+aword:
+  group: word
+  description: a pattern to match a word.
+  pattern: "\\w*[a-zA-Z0-9]\\w*"
+  positive test:
+    pattern matches a word: "abc"
+  negative test:
+    the word pattern can not match data: "[...]"
+
 words:
   group: word
   description: a pattern to match at least one word.
@@ -284,11 +444,38 @@ words:
   negative test:
     the words pattern can not match data: "... +++"
 
+awords:
+  group: word
+  description: a pattern to match at least one word.
+  pattern: "\\w*[a-zA-Z0-9]\\w*( \\w*[a-zA-Z0-9]\\w*)*"
+  positive test:
+    pattern match words: "abc xyz"
+  negative test:
+    the words pattern can not match data: "... +++"
+
+iwords:
+  group: word
+  description: a pattern to match at least one word.
+  pattern: "[a-zA-Z0-9]+( +[a-zA-Z0-9]+)*"
+  positive test:
+    pattern match words: "abc xyz"
+  negative test:
+    the words pattern can not match data: "... +++"
+
+iawords:
+  group: word
+  description: a pattern to match at least one word.
+  pattern: "\\w*[a-zA-Z0-9]\\w*( +\\w*[a-zA-Z0-9]\\w*)*"
+  positive test:
+    pattern match words: "abc xyz"
+  negative test:
+    the words pattern can not match data: "... +++"
+
 mixed_word:
   group: word
   description: a pattern to match a mixed word that might include a punctuation.
   # pattern: "\\S*[a-zA-Z0-9]\\S*"
-  pattern: '[\x21-\x7e]+'
+  pattern: "[\x21-\x7e]+"
   positive test:
     pattern matches a mixed word: "abc@xyz.com"
   negative test:
@@ -298,7 +485,17 @@ mixed_words:
   group: word
   description: a pattern to match at least one mixed word.
   # pattern: "\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)*"
-  pattern: '[\x21-\x7e]+( [\x21-\x7e]+)*'
+  pattern: "[\x21-\x7e]+( [\x21-\x7e]+)*"
+  positive test:
+    pattern match mixed words: "email: abc@xyz.com"
+  negative test:
+    the mixed words pattern can not match data: "+-*/ -&^"
+
+mixed_iwords:
+  group: word
+  description: a pattern to match at least one mixed word.
+  # pattern: "\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)*"
+  pattern: "[\x21-\x7e]+( +[\x21-\x7e]+)*"
   positive test:
     pattern match mixed words: "email: abc@xyz.com"
   negative test:
@@ -313,10 +510,46 @@ phrase:
   negative test:
     the phrase pattern can not match data: "abc"
 
+aphrase:
+  group: word
+  description: a pattern to match a phrase, i.e. at least two words.
+  pattern: "\\w*[a-zA-Z0-9]\\w*( \\w*[a-zA-Z0-9]\\w*)+"
+  positive test:
+    pattern match a phrase: "abc xyz"
+  negative test:
+    the phrase pattern can not match data: "abc"
+
+iphrase:
+  group: word
+  description: a pattern to match a phrase, i.e. at least two words.
+  pattern: "[a-zA-Z0-9]+( +[a-zA-Z0-9]+)+"
+  positive test:
+    pattern match a phrase: "abc xyz"
+  negative test:
+    the phrase pattern can not match data: "abc"
+
+iaphrase:
+  group: word
+  description: a pattern to match a phrase, i.e. at least two words.
+  pattern: "\\w*[a-zA-Z0-9]\\w*( +\\w*[a-zA-Z0-9]\\w*)+"
+  positive test:
+    pattern match a phrase: "abc xyz"
+  negative test:
+    the phrase pattern can not match data: "abc"
+
 mixed_phrase:
   group: word
   description: a pattern to match a mixed phrase.
-  pattern: '[\x21-\x7e]+( [\x21-\x7e]+)+'
+  pattern: "[\x21-\x7e]+( [\x21-\x7e]+)+"
+  positive test:
+    pattern match a mixed phrase: "email: abc@xyz.com"
+  negative test:
+    the mixed phrase pattern can not match data: "email:"
+
+mixed_iphrase:
+  group: word
+  description: a pattern to match a mixed phrase.
+  pattern: "[\x21-\x7e]+( +[\x21-\x7e]+)+"
   positive test:
     pattern match a mixed phrase: "email: abc@xyz.com"
   negative test:
@@ -428,6 +661,16 @@ datetime:
     the format3 datetime pattern can not match data: Friday April  9, 2021 8:43:15 PM
     the format4 datetime pattern can not match data: 2021/04/11 03:03
 
+mac_addr:
+  group: address
+  description: a pattern to match an MAC address.
+  pattern: "[0-9a-fA-F]{2}([: -][0-9a-fA-F]{2}){5}"
+  positive test:
+    pattern matches mac addresses: [
+        "11:22:33:aa:bb:cc",
+        "11-22-33-aa-bb-cc",
+    ]
+
 mac_address:
   group: address
   description: a pattern to match an MAC address.
@@ -447,6 +690,24 @@ mac_address:
         "1122 33aa bbcc",
         "1122-33aa-bbcc",
         "1122:33aa:bbcc",
+    ]
+
+ipv4_addr:
+  group: address
+  description: a pattern to match an ipv4 address.
+  pattern: "\\d{1,3}([.]\\d{1,3}){3}"
+  positive test:
+    pattern matches ipv4 addresses: [
+        "127.0.0.1",
+        "192.168.0.1",
+        "255.255.255.255",
+        "127.256.1.1",
+        "256.1.1.1",
+        "127.0 0.1",
+    ]
+  negative test:
+    the ipv4 address pattern can not match data: [
+        "127.1111.0.1",
     ]
 
 ipv4_address:
@@ -510,4 +771,3 @@ version:
   pattern: "[0-9]\\S*"
   positive test:
     pattern matches any character: ["1", "1.1", "1.1.1", "1.1.1-a"]
-
