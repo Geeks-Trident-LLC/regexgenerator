@@ -9,6 +9,7 @@ from pathlib import PurePath
 import yaml
 
 from genericlib import version as gtlib_version
+from genericlib import File
 
 __version__ = '0.3.11'
 version = __version__
@@ -106,5 +107,74 @@ class Data:
     @classmethod
     def get_defined_symbols(cls):
         with open(cls.symbol_reference_filename) as stream:
+            content = stream.read()
+            return content
+
+    @classmethod
+    def get_user_custom_keywords(cls):
+        filename = cls.user_reference_filename
+        if not File.is_exist(filename):
+            File.create(cls.user_reference_filename)
+            content = dedent("""
+            ###########################################################
+            # These custom keywords are created by various end-users. #
+            # Ask maintainer to add new custom keyword.               #
+            # Geeks Trident has NO LICENSE RIGHT to these keywords.   #
+            ###########################################################
+            
+            regex_word: &regex_word
+              author: Tuyen M Duong <tuyen@geekstrident.com> -- 2023-07-12
+              description: a pattern to match a word or underline mark.
+              pattern: "\\w+"
+              positive_test: ["abc", "xyz", "abc_xyz", "a123", "_____"]
+              negative_test: ["!@-+", "   "]
+            
+            rword: *regex_word
+            
+            regex_word_or_group: &regex_word_or_group
+              author: Tuyen M Duong <tuyen@geekstrident.com> -- 2023-07-12
+              description: a pattern to match at least one word or underline mark.
+              pattern: "\\w+( \\w+)*"
+              positive_test: ["abc", "abc xyz", "xyz abc_xyz", "a123 _____ xyz"]
+              negative_test: ["!@-+", "+++ ---"]
+            
+            regex_words: *regex_word_or_group
+            
+            rwords: *regex_word_or_group
+            
+            regex_word_or_flex_group: &regex_word_or_flex_group
+              author: Tuyen M Duong <tuyen@geekstrident.com> -- 2023-07-12
+              description: a pattern to match at least one word or underline mark.
+              pattern: "\\w+( +\\w+)*"
+              positive_test: ["abc", "abc xyz", "xyz   abc_xyz", "a123   _____ xyz"]
+              negative_test: ["!@-+", "+++ ---"]
+            
+            flex_regex_words: *regex_word_or_flex_group
+            
+            flex_rwords: *regex_word_or_flex_group
+            
+            regex_word_group: &regex_word_group
+              author: Tuyen M Duong <tuyen@geekstrident.com> -- 2023-07-12
+              description: a pattern to match at least two words or underline mark.
+              pattern: "\\w+( \\w+)+"
+              positive_test: ["abc xyz", "xyz abc_xyz", "a123 _____ xyz"]
+              negative_test: ["!@-+", "+++ ---", "abc"]
+            
+            rword_group: *regex_word_group
+            
+            regex_word_flex_group: &regex_word_flex_group
+              author: Tuyen M Duong <tuyen@geekstrident.com> -- 2023-07-12
+              description: a pattern to match at least two words or underline mark.
+              pattern: "\\w+( +\\w+)+"
+              positive_test: ["abc xyz", "xyz   abc_xyz", "a123 _____   xyz"]
+              negative_test: ["!@-+", "+++ ---", "abc"]
+            
+            rword_flex_group: *regex_word_flex_group
+            
+            """).lstrip()
+
+            File.save(filename, content)
+
+        with open(filename) as stream:
             content = stream.read()
             return content
