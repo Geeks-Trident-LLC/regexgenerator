@@ -13,12 +13,12 @@ zero_or_anything: &zero_or_anything
 zoanything: *zero_or_anything
 
 something:
-  description: a pattern to match at least one character.
+  description: a pattern to match zero or some characters.
   pattern: ".*"
   positive_test: "abc"
 
 everything:
-  description: a pattern to match all characters.
+  description: a pattern to match at least one character.
   pattern: ".+"
   positive_test: "abc"
 
@@ -37,7 +37,7 @@ zero_or_space: &zero_or_space
 zospace: *zero_or_space
 
 spaces:
-  description: a pattern to match multiple spaces.
+  description: a pattern to match at least one blank spaces.
   pattern: " +"
   positive_test: "  "
   negative_test: "."
@@ -75,7 +75,7 @@ zero_or_non_spaces: &zero_or_non_spaces
 zononspaces: *zero_or_non_spaces
 
 non_spaces:
-  description: a pattern to match multiple non-blank space characters.
+  description: a pattern to match at least one non-blank space characters.
   pattern: "[^ ]+"
   positive_test: "\n"
   negative_test: "a"
@@ -304,11 +304,21 @@ another_word: &another_word
 
 aword: *another_word
 
-words:
+word_or_group: &word_or_group
   description: a pattern to match at least one word.
   pattern: "[a-zA-Z0-9]+( [a-zA-Z0-9]+)*"
-  positive_test: "abc xyz"
-  negative_test: "... +++"
+  positive_test: "abc"
+  negative_test: "[...]"
+
+words: *word_or_group
+
+word_or_flex_group: &word_or_flex_group
+  description: a pattern to match at least one word.
+  pattern: "[a-zA-Z0-9]+( +[a-zA-Z0-9]+)*"
+  positive_test: "abc"
+  negative_test: "[...]"
+
+flex_words: *word_or_flex_group
 
 another_words: &another_words
   description: a pattern to match at least one word.
@@ -318,29 +328,13 @@ another_words: &another_words
 
 awords: *another_words
 
-flex_words:
-  description: a pattern to match at least one word.
-  pattern: "[a-zA-Z0-9]+( +[a-zA-Z0-9]+)*"
-  positive_test: "abc xyz"
-  negative_test: "... +++"
-
-another_flex_words:
+another_word_or_flex_group: &another_word_or_flex_group
   description: a pattern to match at least one word.
   pattern: "\\w*[a-zA-Z0-9]\\w*( +\\w*[a-zA-Z0-9]\\w*)*"
   positive_test: "abc xyz"
   negative_test: "... +++"
 
-word_or_group:
-  description: a pattern to match at least one word.
-  pattern: "[a-zA-Z0-9]+( [a-zA-Z0-9]+)*"
-  positive_test: "abc"
-  negative_test: "[...]"
-
-word_or_flex_group:
-  description: a pattern to match at least one word.
-  pattern: "[a-zA-Z0-9]+( +[a-zA-Z0-9]+)*"
-  positive_test: "abc"
-  negative_test: "[...]"
+another_flex_words: *another_word_or_flex_group
 
 word_group:
   description: a pattern to match at least two words.
@@ -360,29 +354,21 @@ mixed_word:
   positive_test: "abc@xyz.com"
   negative_test: "+-*/"
 
-mixed_words:
-  description: a pattern to match at least one mixed word.
-  pattern: "[\\x21-\\x7e]+( [\\x21-\\x7e]+)*"
-  positive_test: "email: abc@xyz.com"
-  negative_test: "+-*/ -&^"
-
-mixed_flex_words:
-  description: a pattern to match at least one mixed word.
-  pattern: "[\\x21-\\x7e]+( +[\\x21-\\x7e]+)*"
-  positive_test: "email: abc@xyz.com"
-  negative_test: "+-*/ -&^"
-
-mixed_word_or_group:
+mixed_word_or_group: &mixed_word_or_group
   description: a pattern to match at least one mixed-word.
   pattern: "[\\x21-\\x7e]+( [\\x21-\\x7e]+)*"
   positive_test: "email: abc@xyz.com"
   negative_test: "+-*/ -&^"
 
-mixed_word_or_flex_group:
+mixed_words: *mixed_word_or_group
+
+mixed_word_or_flex_group: &mixed_word_or_flex_group
   description: a pattern to match at least one mixed-word.
   pattern: "[\\x21-\\x7e]+( +[\\x21-\\x7e]+)*"
   positive_test: "email: abc@xyz.com"
   negative_test: "+-*/ -&^"
+
+mixed_flex_words: *mixed_word_or_flex_group
 
 mixed_word_group:
   description: a pattern to match at least two mixed-word.
@@ -421,15 +407,15 @@ another_flex_phrase:
   negative_test: "abc"
 
 mixed_phrase:
-  description: a pattern to match a mixed phrase.
+  description: a pattern to match at least two mixed words.
   pattern: "[\\x21-\\x7e]+( [\\x21-\\x7e]+)+"
   positive_test: "email: abc@xyz.com"
   negative_test: "email:"
 
 flex_mixed_phrase:
-  description: a pattern to match a mixed phrase.
+  description: a pattern to match at least two mixed words.
   pattern: "[\\x21-\\x7e]+( +[\\x21-\\x7e]+)+"
-  positive_test: "email: abc@xyz.com"
+  positive_test: ["email: abc@xyz.com", "email:   abc@xyz.com"]
   negative_test: "email:"
 
 hexadecimal:
@@ -498,13 +484,13 @@ datetime:
   format3: "[a-zA-Z]+, [a-zA-Z]+ +[0-9]+, [0-9]+ [0-9]+:[0-9]+:[0-9]+ [a-zA-Z]+"
   format4: "[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+"
   positive_test:
-    default: 07/10/2021
+    format: 07/10/2021
     format1: 07/10/2021 08:56:45
     format2: 2021 Jun 16 14:44:01
     format3: Friday, April  9, 2021 8:43:15 PM
     format4: 2021-04-11 03:03
   negative_test:
-    default: 07-10-2021
+    format: 07-10-2021
     format1: 07-10-2021 08:56:45
     format2: 2021 Jun 16, 14:44:01
     format3: Friday April  9, 2021 8:43:15 PM
@@ -515,7 +501,8 @@ mac_addr:
   pattern: "[0-9a-fA-F]{2}([: -][0-9a-fA-F]{2}){5}"
   positive_test: [
         "11:22:33:aa:bb:cc",
-        "11-22-33-aa-bb-cc"
+        "11-22-33-aa-bb-cc",
+        "11:22:33 aa-bb-cc"
     ]
 
 mac_address:
