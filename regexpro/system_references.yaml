@@ -478,20 +478,20 @@ mixed_number:
 
 datetime:
   description: a pattern to match datetime string
-  format: "\\d{2}/\\d{2}/\\d{4}"
-  format1: "\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}"
+  format: "\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}"
+  format1: "\\d{2}-\\d{2}-\\d{4} \\d{2}:\\d{2}:\\d{2}"
   format2: "\\d{4} [a-zA-Z]{3} +\\d{1,2} \\d{2}:\\d{2}:\\d{2}"
-  format3: "[a-zA-Z]{6,9}, [a-zA-Z]{3,2} +\\d{1,2}, \\d{4} 1?\\d:\\d{2}:\\d{2} [apAP][mM]"
+  format3: "[a-zA-Z]{6,9}, [a-zA-Z]{3,9} +\\d{1,2}, \\d{4} 1?\\d:\\d{2}:\\d{2} [apAP][mM]"
   format4: "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}"
   positive_test:
-    format: 07/10/2021
-    format1: 07/10/2021 08:56:45
+    format: 07/10/2021 08:56:45
+    format1: 07-10-2021 08:56:45
     format2: 2021 Jun 16 14:44:01
     format3: Friday, April  9, 2021 8:43:15 PM
     format4: 2021-04-11 03:03
   negative_test:
-    format: 07-10-2021
-    format1: 07-10-2021 08:56:45
+    format: 07-10-2021 08:56:45
+    format1: 07/10/2021 08:56:45
     format2: 2021 Jun 16, 14:44:01
     format3: Friday April  9, 2021 8:43:15 PM
     format4: 2021/04/11 03:03
@@ -499,20 +499,20 @@ datetime:
 date:
   description: a pattern to match date string
   format: "\\d{2}/\\d{2}/\\d{4}"
-  format1: "\\d{4}[a-zA-Z]{3}\\d{2}"
-  format2: "\\d{4} [a-zA-Z]{3} +\\d{1,2}"
+  format1: "\\d{2}-\\d{2}-\\d{4}"
+  format2: "\\d{4}[a-zA-Z]{3}\\d{2}"
   format3: "[a-zA-Z]{6,9}, [a-zA-Z]{3,9} +\\d{1,2}, \\d{4}"
   format4: "\\d{4}-\\d{2}-\\d{2}"
   positive_test:
     format: 07/10/2021
-    format1: 2021Jun16
-    format2: 2021 Jun 16
+    format1: 07-10-2021
+    format2: 2021Jun16
     format3: Friday, April  9, 2021
     format4: 2021-04-11
   negative_test:
     format: 07-10-2021
-    format1: 07July2021
-    format2: 2021 Jun 16
+    format1: 07/10/2021
+    format2: 07July2021
     format3: Friday April  9, 2021
     format4: 2021/04/11
 
