@@ -2145,11 +2145,11 @@ class MultilinePattern(str):
             return pattern
         else:
             pattern = pattern.replace('(?i)', '')
+            pattern = pattern[1:] if pattern.startswith('^') else pattern
             if is_last:
                 return f'{add_on_pat}{pattern}'
             else:
-                if pattern.endswith('$'):
-                    pattern = pattern[:-1]
+                pattern = pattern[:-1] if pattern.endswith('$') else pattern
                 return f'{add_on_pat}{pattern}'
 
 
