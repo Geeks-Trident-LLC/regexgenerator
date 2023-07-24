@@ -152,7 +152,7 @@ class PatternReference(dict):
             yaml_obj = yaml.safe_load(stream)
             self.update(yaml_obj)
 
-    def load_reference(self, filename):
+    def load_reference(self, filename, is_warning=True):
         """Load reference from YAML references file.
         Parameters
         ----------
@@ -197,7 +197,7 @@ class PatternReference(dict):
                         else:
                             fmt = ('%r key is already existed.  '
                                    'Wont update %r data to key.')
-                            logger.warning(fmt, key, value)
+                            is_warning and logger.warning(fmt, key, value)
         except Exception as ex:
             msg = '{} - {}'.format(type(ex).__name__, ex)
             raise PatternReferenceError(msg)

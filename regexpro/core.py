@@ -218,6 +218,8 @@ class RegexBuilder:
         self.test_data_pattern_table = OrderedDict()    # test data via pattern
         self.pattern_test_data_table = OrderedDict()    # pattern via test data
 
+        BASELINE_REF.load_reference(BASELINE_REF.user_ref_loc, is_warning=False)
+
     @classmethod
     def validate_data(cls, **kwargs):
         """validate data
