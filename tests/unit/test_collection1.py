@@ -265,13 +265,13 @@ class TestElementPattern:
         [
             (
                 'words(head)',
-                '^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*',
-                '[a-zA-Z0-9]+( [a-zA-Z0-9]+)*'
+                '^[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*',
+                '[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*'
             ),
             (
                 'words(var_v1, head_whitespace)',
-                '^\\s*(?P<v1>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)',
-                '(?P<v1>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)'
+                '^\\s*(?P<v1>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)',
+                '(?P<v1>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)'
             ),
         ]
     )
@@ -290,13 +290,13 @@ class TestElementPattern:
         [
             (
                 'words(tail)',
-                '[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$',
-                '[a-zA-Z0-9]+( [a-zA-Z0-9]+)*'
+                '[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*$',
+                '[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*'
             ),
             (
                 'words(var_v1, tail_whitespace)',
-                '(?P<v1>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)\\s*$',
-                '(?P<v1>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)'
+                '(?P<v1>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)\\s*$',
+                '(?P<v1>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)'
             ),
         ]
     )

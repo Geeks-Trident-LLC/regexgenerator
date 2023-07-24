@@ -64,7 +64,7 @@ class TestLinePattern:
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',      # noqa
                 'mixed_word(var_interface_name) is words(var_interface_status), line protocol is words(var_protocol_status)',   # noqa
-                '(?i)(?P<interface_name>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*) is (?P<interface_status>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*), line protocol is (?P<protocol_status>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)',    # noqa
+                '(?i)(?P<interface_name>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*) is (?P<interface_status>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*), line protocol is (?P<protocol_status>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)',    # noqa
                 False, False, True,
                 True
             ),
@@ -120,49 +120,49 @@ class TestLinePattern:
             (
                 'today is Friday.',                         # test data
                 'today is word(var_day, word_bound).',      # user prepared data
-                '(?i)today is (?P<day>\\b[a-zA-Z0-9]+\\b)\\.',    # expected pattern
+                '(?i)today is (?P<day>\\b[a-zA-Z][a-zA-Z0-9]*\\b)\\.',    # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'cherry is delicious.',                     # test data
                 'word(var_fruit, head) is delicious.',      # user prepared data
-                '(?i)^(?P<fruit>[a-zA-Z0-9]+) is delicious\\.',     # expected pattern
+                '(?i)^(?P<fruit>[a-zA-Z][a-zA-Z0-9]*) is delicious\\.',     # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'cherry is delicious.',                             # test data
                 'word(var_fruit, head_ws) is delicious.',        # user prepared data
-                '(?i)^\\s*(?P<fruit>[a-zA-Z0-9]+) is delicious\\.',     # expected pattern
+                '(?i)^\\s*(?P<fruit>[a-zA-Z][a-zA-Z0-9]*) is delicious\\.',     # expected pattern
                 False, False, True,
                 True
             ),
             (
                 '\r\n cherry is delicious.',                        # test data
                 'word(var_fruit, head_ws) is delicious.',        # user prepared data
-                '(?i)^\\s*(?P<fruit>[a-zA-Z0-9]+) is delicious\\.',     # expected pattern
+                '(?i)^\\s*(?P<fruit>[a-zA-Z][a-zA-Z0-9]*) is delicious\\.',     # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'I live in ABC',                                        # test data
                 'I live in words(var_city, tail)',                     # user prepared data
-                '(?i)I live in (?P<city>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)$',        # expected pattern
+                '(?i)I live in (?P<city>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)$',        # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'I live in ABC',                                        # test data
                 'I live in words(var_city, tail_ws)',                  # user prepared data
-                '(?i)I live in (?P<city>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)\\s*$',    # expected pattern
+                '(?i)I live in (?P<city>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)\\s*$',    # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'I live in ABC \r\n',                                   # test data
                 'I live in words(var_city, tail_ws)',                  # user prepared data
-                '(?i)I live in (?P<city>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)\\s*$',    # expected pattern
+                '(?i)I live in (?P<city>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)\\s*$',    # expected pattern
                 False, False, True,
                 True
             ),
@@ -239,14 +239,14 @@ class TestLinePattern:
             (
                 'cherry is delicious.',  # test data
                 'start(space)word(var_fruit) is delicious.',  # user prepared data
-                '(?i)^ *(?P<fruit>[a-zA-Z0-9]+) is delicious\\.',  # expected pattern
+                '(?i)^ *(?P<fruit>[a-zA-Z][a-zA-Z0-9]*) is delicious\\.',  # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'cherry is delicious.',  # test data
                 'start(space) word(var_fruit) is delicious.',  # user prepared data
-                '(?i)^ *(?P<fruit>[a-zA-Z0-9]+) is delicious\\.',  # expected pattern
+                '(?i)^ *(?P<fruit>[a-zA-Z][a-zA-Z0-9]*) is delicious\\.',  # expected pattern
                 False, False, True,
                 True
             ),
@@ -260,14 +260,14 @@ class TestLinePattern:
             (
                 'this box is green',  # test data
                 'this box is word(var_color)end()',  # user prepared data
-                '(?i)this box is (?P<color>[a-zA-Z0-9]+)$',  # expected pattern
+                '(?i)this box is (?P<color>[a-zA-Z][a-zA-Z0-9]*)$',  # expected pattern
                 False, False, True,
                 True
             ),
             (
                 'this box is green',  # test data
                 'this box is word(var_color) end()',  # user prepared data
-                '(?i)this box is (?P<color>[a-zA-Z0-9]+)$',  # expected pattern
+                '(?i)this box is (?P<color>[a-zA-Z][a-zA-Z0-9]*)$',  # expected pattern
                 False, False, True,
                 True
             ),
@@ -326,14 +326,14 @@ class TestLinePattern:
             (
                 ['cherry is good for health'],  # test data
                 'word() is words()',  # user prepared data
-                '^\\s*[a-zA-Z0-9]+ is [a-zA-Z0-9]+( [a-zA-Z0-9]+)*',  # expected pattern
-                '^\\s*[a-zA-Z0-9]+ is [a-zA-Z0-9]+( [a-zA-Z0-9]+)*',  # expected statement
+                '^\\s*[a-zA-Z][a-zA-Z0-9]* is [a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*',  # expected pattern
+                '^\\s*[a-zA-Z][a-zA-Z0-9]* is [a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*',  # expected statement
                 True, False, False,
             ),
             (
                 ['cherry is good for health'],  # test data
                 'word(var_fruit) is words(var_desc)',  # user prepared data
-                '^\\s*(?P<fruit>[a-zA-Z0-9]+) is (?P<desc>[a-zA-Z0-9]+( [a-zA-Z0-9]+)*)',  # expected pattern
+                '^\\s*(?P<fruit>[a-zA-Z][a-zA-Z0-9]*) is (?P<desc>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)',  # expected pattern
                 '^\\s*${fruit} is ${desc}',     # expected statement
                 True, False, False,
             ),

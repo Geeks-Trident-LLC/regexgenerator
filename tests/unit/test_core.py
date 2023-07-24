@@ -39,10 +39,10 @@ def tc_info():
 
         Matched Result:
         --------------
-        pattern: (?P<subject>[a-zA-Z0-9]+( [a-zA-Z0-9]+)+) is (?P<degree>\\d+) degrees (?P<unit>[a-zA-Z0-9]+)\\.
+        pattern: (?P<subject>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)+) is (?P<degree>\\d+) degrees (?P<unit>[a-zA-Z][a-zA-Z0-9]*)\\.
         matched: [{'subject': 'today temperature', 'degree': '75', 'unit': 'fahrenheit'}, {'subject': 'the highest temperature ever recorded on Earth', 'degree': '134', 'unit': 'fahrenheit'}]
         ----------
-        pattern:  +IPv4 Address(\\. ){2,}: (?P<ipv4_addr>((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]?\\d))(\\.((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]?\\d))){3})\\((?P<status>[a-zA-Z0-9]+)\\)
+        pattern:  +IPv4 Address(\\. ){2,}: (?P<ipv4_addr>((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]?\\d))(\\.((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]?\\d))){3})\\((?P<status>[a-zA-Z][a-zA-Z0-9]*)\\)
         matched: [{'ipv4_addr': '192.168.0.1', 'status': 'Preferred'}]
         ----------
     """
@@ -55,22 +55,22 @@ def tc_info():
     """
 
     other_test_data = """
-        -rw-r--r-- 1 abc 197121  133 Jun 10 20:33 README.md
-        -rw-r--r-- 1 abc 197121 1488 Jul 27 00:48 setup.py
-        drwxr-xr-x 1 abc 197121    0 Jul  7 15:33 tests/
+        -rw-r--r-- 1 abc staff  133 Jun 10 20:33 README.md
+        -rw-r--r-- 1 abc staff 1488 Jul 27 00:48 setup.py
+        drwxr-xr-x 1 abc staff    0 Jul  7 15:33 tests/
     """
 
     other_test_report = """
         Test Data:
         ---------
-        -rw-r--r-- 1 abc 197121  133 Jun 10 20:33 README.md
-        -rw-r--r-- 1 abc 197121 1488 Jul 27 00:48 setup.py
-        drwxr-xr-x 1 abc 197121    0 Jul  7 15:33 tests/
+        -rw-r--r-- 1 abc staff  133 Jun 10 20:33 README.md
+        -rw-r--r-- 1 abc staff 1488 Jul 27 00:48 setup.py
+        drwxr-xr-x 1 abc staff    0 Jul  7 15:33 tests/
 
         Matched Result:
         --------------
-        pattern: (?P<file_type>\\S)(?P<file_permission>\\S+) (?P<hard_links>\\d+) (?P<file_owner>[a-zA-Z0-9]+) (?P<file_group>[a-zA-Z0-9]+) +(?P<file_size>\\d+) (?P<date>[a-zA-Z]{3} +\\d{1,2}) (?P<time>\\d+:\\d+) (?P<filename>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
-        matched: [{'file_type': '-', 'file_permission': 'rw-r--r--', 'hard_links': '1', 'file_owner': 'abc', 'file_group': '197121', 'file_size': '133', 'date': 'Jun 10', 'time': '20:33', 'filename': 'README.md'}, {'file_type': '-', 'file_permission': 'rw-r--r--', 'hard_links': '1', 'file_owner': 'abc', 'file_group': '197121', 'file_size': '1488', 'date': 'Jul 27', 'time': '00:48', 'filename': 'setup.py'}, {'file_type': 'd', 'file_permission': 'rwxr-xr-x', 'hard_links': '1', 'file_owner': 'abc', 'file_group': '197121', 'file_size': '0', 'date': 'Jul  7', 'time': '15:33', 'filename': 'tests/'}]
+        pattern: (?P<file_type>\\S)(?P<file_permission>\\S+) (?P<hard_links>\\d+) (?P<file_owner>[a-zA-Z][a-zA-Z0-9]*) (?P<file_group>[a-zA-Z][a-zA-Z0-9]*) +(?P<file_size>\\d+) (?P<date>[a-zA-Z]{3} +\\d{1,2}) (?P<time>\\d+:\\d+) (?P<filename>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
+        matched: [{'file_type': '-', 'file_permission': 'rw-r--r--', 'hard_links': '1', 'file_owner': 'abc', 'file_group': 'staff', 'file_size': '133', 'date': 'Jun 10', 'time': '20:33', 'filename': 'README.md'}, {'file_type': '-', 'file_permission': 'rw-r--r--', 'hard_links': '1', 'file_owner': 'abc', 'file_group': 'staff', 'file_size': '1488', 'date': 'Jul 27', 'time': '00:48', 'filename': 'setup.py'}, {'file_type': 'd', 'file_permission': 'rwxr-xr-x', 'hard_links': '1', 'file_owner': 'abc', 'file_group': 'staff', 'file_size': '0', 'date': 'Jul  7', 'time': '15:33', 'filename': 'tests/'}]
         ----------
     """
 

@@ -7,7 +7,7 @@ from regexpro import TextPattern
 class TestPatternReference:
     def test_initialization(self):
         obj = PatternReference()
-        assert obj.get('word').get('pattern') == r'[a-zA-Z0-9]+'
+        assert obj.get('word').get('pattern') == r'[a-zA-Z][a-zA-Z0-9]*'
 
 
 class TestTextPattern:
