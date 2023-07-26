@@ -1163,8 +1163,7 @@ class NonCommercialUseCls:
         script = dedent(f"""
             import re
 
-            def test_generated_pattern(test_data):
-              {pattern}
+            def test_generated_pattern(test_data, pattern):
               match = re.search(pattern, test_data)
               if match:
                 print(match)
@@ -1172,9 +1171,10 @@ class NonCommercialUseCls:
                 match.groupdict() and print(match.groupdict())
               else:
                 print('??? Generated pattern NOT match any data ???')      
-
+            
+            {pattern}
             test_data = '''...'''   # replace actual data in ellipsis
-            test_generated_pattern(test_data)
+            test_generated_pattern(test_data, pattern)
             ################################""").strip()
         code_snippet = f"{self.comment}\n{script}"
         return code_snippet
@@ -1184,8 +1184,7 @@ class NonCommercialUseCls:
         script = dedent(f"""
             import re
 
-            def test_generated_pattern(test_data):
-              {pattern}
+            def test_generated_pattern(test_data, pattern):
               split_pat = r'(?i)\\r?\\n? *<<separator>> *\\r?\\n?'
               if re.search(split_pat, test_data):
                 blocks = re.split(split_pat, test_data)
@@ -1199,9 +1198,10 @@ class NonCommercialUseCls:
                   match.groupdict() and print(match.groupdict())
                 else:
                   print('??? Generated pattern NOT match data in block #%s ???' % i)      
-
+            
+            {pattern}
             test_data = '''...'''   # replace actual data in ellipsis
-            test_generated_pattern(test_data)
+            test_generated_pattern(test_data, pattern)
             ################################""").strip()
         code_snippet = f"{self.comment}\n{script}"
         return code_snippet
