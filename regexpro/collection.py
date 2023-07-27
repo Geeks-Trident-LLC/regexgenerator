@@ -1878,8 +1878,8 @@ class LinePattern(str):
             return
 
         total = len(lst)
-
-        ws_pat = r'\s*'
+        ws_pat = ElementPattern('zero_or_whitespaces()')
+        insert_indices = []
         for index, item in enumerate(lst[1:], 1):
             prev_item = lst[index-1]
             is_prev_item_text_pat = isinstance(prev_item, (TextPattern, str))
@@ -1887,17 +1887,25 @@ class LinePattern(str):
             if is_prev_item_text_pat and is_item_elm_pat:
                 if item.or_empty:
                     if prev_item.endswith(' '):
-                        lst[index-1] = prev_item.rstrip() + ws_pat
+                        lst[index-1] = prev_item.rstrip()
+                        insert_indices.insert(0, index)
                     elif prev_item.endswith(r'\s'):
-                        lst[index-1] = prev_item + '*'
+                        lst[index-1] = prev_item[:-2]
+                        insert_indices.insert(0, index)
                     elif index == total - 1:
                         if prev_item.endswith(' +'):
-                            lst[index-1] = prev_item[:-2] + ws_pat
+                            lst[index-1] = prev_item[:-2]
+                            insert_indices.insert(0, index)
                         elif prev_item.endswith(r'\s+'):
-                            lst[index-1] = prev_item[:-3] + ws_pat
+                            lst[index-1] = prev_item[:-3]
+                            insert_indices.insert(0, index)
+
+        for index in insert_indices:
+            lst.insert(index, ws_pat)
 
         index = len(lst) - 1
         is_stopped = False
+        insert_indices = []
         while index > 0 and not is_stopped:
             prev_item, item = lst[index-1], lst[index]
             is_prev_item_text_pat = isinstance(prev_item, (TextPattern, str))
@@ -1905,16 +1913,20 @@ class LinePattern(str):
             if is_prev_item_text_pat and is_item_elm_pat:
                 if item.or_empty:
                     if prev_item.endswith(' '):
-                        lst[index - 1] = prev_item.rstrip() + ws_pat
-                    elif prev_item.endswith(r'\s'):
-                        lst[index - 1] = prev_item + '*'
-                    elif prev_item.endswith(' +'):
-                        lst[index - 1] = prev_item[:-2] + ws_pat
+                        lst[index - 1] = prev_item.rstrip()
+                        insert_indices.insert(0, index)
+                    elif prev_item.endswith(r'\s') or prev_item.endswith(' +'):
+                        lst[index - 1] = prev_item[:-2]
+                        insert_indices.insert(0, index)
                     elif prev_item.endswith(r'\s+'):
-                        lst[index - 1] = prev_item[:-3] + ws_pat
+                        lst[index - 1] = prev_item[:-3]
+                        insert_indices.insert(0, index)
             else:
                 is_stopped = True
             index -= 2
+
+        for index in insert_indices:
+            lst.insert(index, ws_pat)
 
         index = len(lst) - 1
         is_stopped = False
