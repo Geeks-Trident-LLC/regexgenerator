@@ -2134,6 +2134,7 @@ class MultilinePattern(str):
         new_line_patterns.append(cls.reformat(last, is_last=True, is_exact=is_exact))
 
         new_pattern = ''.join(new_line_patterns)
+        validate_pattern(new_pattern, exception_cls=MultilinePatternError)
         return new_pattern
 
     @classmethod
