@@ -806,7 +806,6 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
-                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -827,11 +826,31 @@ class ElementPattern(str):
                         is_or_either = str.lower(case).startswith('either_')
                     else:
                         if case in REF:
-                            pat = REF.get(case).get('pattern')
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                pat = REF.get(case).get('format', f'unsupported-{case}-format')
+                                pat not in lst and lst.append(pat)
+                            else:
+                                pat = REF.get(case).get('pattern')
+                                pat not in lst and lst.append(pat)
                         else:
-                            pat = case
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                kw, *indices = re.split('_format', case)
+                                node = REF.get(kw, None)
+                                if node:
+                                    if indices:
+                                        for index in indices:
+                                            key = f'format{index}'
+                                            pat = node.get(key, f'unsupported-{kw}{key}')
+                                            pat not in lst and lst.append(pat)
+                                    else:
+                                        pat = node.get('format', f'unsupported-{kw}format')
+                                        pat not in lst and lst.append(pat)
+                                else:
+                                    pat = case
+                                    pat not in lst and lst.append(pat)
+                            else:
+                                pat = case
+                                pat not in lst and lst.append(pat)
                 else:
                     pat = do_soft_regex_escape(arg)
                     pat not in lst and lst.append(pat)
@@ -926,7 +945,6 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
-                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -935,11 +953,31 @@ class ElementPattern(str):
                         cls._or_empty = is_empty
                     else:
                         if case in REF:
-                            pat = REF.get(case).get('pattern')
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                pat = REF.get(case).get('format', f'unsupported-{case}-format')
+                                pat not in lst and lst.append(pat)
+                            else:
+                                pat = REF.get(case).get('pattern')
+                                pat not in lst and lst.append(pat)
                         else:
-                            pat = case
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                kw, *indices = re.split('_format', case)
+                                node = REF.get(kw, None)
+                                if node:
+                                    if indices:
+                                        for index in indices:
+                                            key = f'format{index}'
+                                            pat = node.get(key, f'unsupported-{kw}{key}')
+                                            pat not in lst and lst.append(pat)
+                                    else:
+                                        pat = node.get('format', f'unsupported-{kw}format')
+                                        pat not in lst and lst.append(pat)
+                                else:
+                                    pat = case
+                                    pat not in lst and lst.append(pat)
+                            else:
+                                pat = case
+                                pat not in lst and lst.append(pat)
                 else:
                     pat = do_soft_regex_escape(arg)
                     pat not in lst and lst.append(pat)
@@ -1024,7 +1062,6 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
-                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1033,11 +1070,31 @@ class ElementPattern(str):
                         cls._or_empty = is_empty
                     else:
                         if case in REF:
-                            pat = REF.get(case).get('pattern')
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                pat = REF.get(case).get('format', f'unsupported-{case}-format')
+                                pat not in lst and lst.append(pat)
+                            else:
+                                pat = REF.get(case).get('pattern')
+                                pat not in lst and lst.append(pat)
                         else:
-                            pat = case
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                kw, *indices = re.split('_format', case)
+                                node = REF.get(kw, None)
+                                if node:
+                                    if indices:
+                                        for index in indices:
+                                            key = f'format{index}'
+                                            pat = node.get(key, f'unsupported-{kw}{key}')
+                                            pat not in lst and lst.append(pat)
+                                    else:
+                                        pat = node.get('format', f'unsupported-{kw}format')
+                                        pat not in lst and lst.append(pat)
+                                else:
+                                    pat = case
+                                    pat not in lst and lst.append(pat)
+                            else:
+                                pat = case
+                                pat not in lst and lst.append(pat)
                 else:
                     pat = do_soft_regex_escape(arg)
                     pat not in lst and lst.append(pat)
@@ -1102,7 +1159,6 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
-                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1111,11 +1167,31 @@ class ElementPattern(str):
                         cls._or_empty = is_empty
                     else:
                         if case in REF:
-                            pat = REF.get(case).get('pattern')
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                pat = REF.get(case).get('format', f'unsupported-{case}-format')
+                                pat not in lst and lst.append(pat)
+                            else:
+                                pat = REF.get(case).get('pattern')
+                                pat not in lst and lst.append(pat)
                         else:
-                            pat = case
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                kw, *indices = re.split('_format', case)
+                                node = REF.get(kw, None)
+                                if node:
+                                    if indices:
+                                        for index in indices:
+                                            key = f'format{index}'
+                                            pat = node.get(key, f'unsupported-{kw}{key}')
+                                            pat not in lst and lst.append(pat)
+                                    else:
+                                        pat = node.get('format', f'unsupported-{kw}format')
+                                        pat not in lst and lst.append(pat)
+                                else:
+                                    pat = case
+                                    pat not in lst and lst.append(pat)
+                            else:
+                                pat = case
+                                pat not in lst and lst.append(pat)
                 else:
                     pat = do_soft_regex_escape(arg)
                     pat not in lst and lst.append(pat)
@@ -1180,7 +1256,6 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
-                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1189,11 +1264,31 @@ class ElementPattern(str):
                         cls._or_empty = is_empty
                     else:
                         if case in REF:
-                            pat = REF.get(case).get('pattern')
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                pat = REF.get(case).get('format', f'unsupported-{case}-format')
+                                pat not in lst and lst.append(pat)
+                            else:
+                                pat = REF.get(case).get('pattern')
+                                pat not in lst and lst.append(pat)
                         else:
-                            pat = case
-                            pat not in lst and lst.append(pat)
+                            if re.match('(?i)time|date(time)?', case):
+                                kw, *indices = re.split('_format', case)
+                                node = REF.get(kw, None)
+                                if node:
+                                    if indices:
+                                        for index in indices:
+                                            key = f'format{index}'
+                                            pat = node.get(key, f'unsupported-{kw}{key}')
+                                            pat not in lst and lst.append(pat)
+                                    else:
+                                        pat = node.get('format', f'unsupported-{kw}format')
+                                        pat not in lst and lst.append(pat)
+                                else:
+                                    pat = case
+                                    pat not in lst and lst.append(pat)
+                            else:
+                                pat = case
+                                pat not in lst and lst.append(pat)
                 else:
                     pat = do_soft_regex_escape(arg)
                     pat not in lst and lst.append(pat)
