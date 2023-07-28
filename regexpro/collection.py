@@ -806,6 +806,7 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
+                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -925,6 +926,7 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
+                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1022,6 +1024,7 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
+                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1099,6 +1102,7 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
+                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1176,6 +1180,7 @@ class ElementPattern(str):
                 else:
                     cls._variable.option = arg.lstrip('meta_data_')
             else:
+                # import pdb; pdb.set_trace()
                 match = re.match(or_pat, arg, flags=re.I)
                 if match:
                     case = match.group('case')
@@ -1299,6 +1304,19 @@ class ElementPattern(str):
         new_lst = []
         has_ws = False
         if len(lst) > 1:
+            # for item in lst:
+            #     if item.startswith('(') and item.endswith(')'):
+            #         v = item
+            #     else:
+            #         if re.match(r' ([?+*]+|([{][0-9,]+[}]))$', item):
+            #             v = item
+            #         else:
+            #             if item:
+            #                 v = '({})'.format(item)
+            #             else:
+            #                 v = item
+            #     v not in new_lst and new_lst.append(v)
+
             for item in lst:
                 if ' ' in item or r'\s' in item:
                     has_ws = True
