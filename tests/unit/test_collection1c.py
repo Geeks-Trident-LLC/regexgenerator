@@ -13,7 +13,7 @@ class TestElementPatternC:
             ('choice(up, down, administratively down)', '(up|down|(administratively down))'),
             ('choice(up, down, administratively down, var_v2)', '(?P<v2>up|down|(administratively down))'),
             ('choice(up, down, administratively down, var_v2, or_empty)', '(?P<v2>up|down|(administratively down)|)'),
-            ('choice(up, down, administratively down, var_v2, or_empty, or_digits)', '(?P<v2>up|down|(administratively down)|\\d+|)'),      # noqa
+            ('choice(up, down, administratively down, var_v2, or_empty, or_digits)', '(?P<v2>up|down|(administratively down)|(\\d+)|)'),      # noqa
             ('choice(abc, word_bound)', '\\b(abc)\\b'),
             ('choice(abc, xyz, word_bound)', '\\b(abc|xyz)\\b'),
             ('choice(var_v1, abc, xyz, word_bound)', '(?P<v1>\\b(abc|xyz)\\b)'),
@@ -31,7 +31,7 @@ class TestElementPatternC:
             ('symbol(name=hexadecimal, 1_or_2_occurrence)', '[0-9a-fA-F]{1,2}'),
             ('symbol(var_v1, name=hexadecimal, 1_or_2_occurrence)', '(?P<v1>[0-9a-fA-F]{1,2})'),
             ('symbol(var_v1, name=hex, 1_or_2_occurrence, word_bound)', '(?P<v1>\\b[0-9a-fA-F]{1,2}\\b)'),
-            ('symbol(var_v1, name=hex, 1_or_2_occurrence, word_bound, N/A)', '(?P<v1>\\b([0-9a-fA-F]{1,2}|N/A)\\b)'),
+            ('symbol(var_v1, name=hex, 1_or_2_occurrence, word_bound, N/A)', '(?P<v1>\\b(([0-9a-fA-F]{1,2})|N/A)\\b)'),
             ####################################################################
             # start keyword test                                               #
             ####################################################################

@@ -1304,19 +1304,6 @@ class ElementPattern(str):
         new_lst = []
         has_ws = False
         if len(lst) > 1:
-            # for item in lst:
-            #     if item.startswith('(') and item.endswith(')'):
-            #         v = item
-            #     else:
-            #         if re.match(r' ([?+*]+|([{][0-9,]+[}]))$', item):
-            #             v = item
-            #         else:
-            #             if item:
-            #                 v = '({})'.format(item)
-            #             else:
-            #                 v = item
-            #     v not in new_lst and new_lst.append(v)
-
             for item in lst:
                 if ' ' in item or r'\s' in item:
                     has_ws = True
@@ -1328,7 +1315,17 @@ class ElementPattern(str):
                         else:
                             v = '({})'.format(item)
                 else:
-                    v = item
+                    if item:
+                        chk1 = '\\' in item
+                        chk2 = '[' in item and ']' in item
+                        chk3 = '(' in item and ')' in item
+                        chk4 = '{' in item and '}' in item
+                        if chk1 or chk2 or chk3 or chk4:
+                            v = '({})'.format(item)
+                        else:
+                            v = item
+                    else:
+                        v = item
                 v not in new_lst and new_lst.append(v)
         else:
             new_lst = lst

@@ -8,11 +8,11 @@ class TestLinePattern:
         [
             (
                 'start() Food: word(var_food, or_empty)  Total: digits(var_total, N/A) end()',  # user prepared data
-                '^Food:\\s*(?P<food>[a-zA-Z][a-zA-Z0-9]*|) +Total: (?P<total>\\d+|N/A)$'        # expected_pattern
+                '^Food:\\s*(?P<food>([a-zA-Z][a-zA-Z0-9]*)|) +Total: (?P<total>(\\d+)|N/A)$'        # expected_pattern
             ),
             (
                 'digits(var_v1)   letters(var_v2, or_empty)     digits(var_v3)',
-                '(?P<v1>\\d+)\\s*(?P<v2>[a-zA-Z]+|) +(?P<v3>\\d+)'
+                '(?P<v1>\\d+)\\s*(?P<v2>([a-zA-Z]+)|) +(?P<v3>\\d+)'
             )
         ]
     )

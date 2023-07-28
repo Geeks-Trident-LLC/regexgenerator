@@ -350,7 +350,7 @@ class TestLinePattern:
                     '123   567'
                 ],  # test data
                 'digits(var_v1)   letters(var_v2, or_empty)     digits(var_v3)',  # user prepared data
-                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>[a-zA-Z]+|) +(?P<v3>\\d+)',  # expected pattern
+                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>([a-zA-Z]+)|) +(?P<v3>\\d+)',  # expected pattern
                 '^\\s*${v1}\\s*${v2} +${v3}',  # expected statement
                 True, False, False,
             ),
@@ -360,7 +360,7 @@ class TestLinePattern:
                     '123   567'
                 ],  # test data
                 'digits(var_v1)   letters(var_v2, or_empty)   digits(var_v3)',  # user prepared data
-                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>[a-zA-Z]+|) +(?P<v3>\\d+)',  # expected pattern
+                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>([a-zA-Z]+)|) +(?P<v3>\\d+)',  # expected pattern
                 '^\\s*${v1}\\s*${v2} +${v3}',  # expected statement
                 True, False, False,
             ),
@@ -370,7 +370,7 @@ class TestLinePattern:
                     '123   abc'
                 ],  # test data
                 'digits(var_v1)   letters(var_v2)     digits(var_v3, or_empty)',  # user prepared data
-                '^\\s*(?P<v1>\\d+) +(?P<v2>[a-zA-Z]+)\\s*(?P<v3>\\d+|)',  # expected pattern
+                '^\\s*(?P<v1>\\d+) +(?P<v2>[a-zA-Z]+)\\s*(?P<v3>(\\d+)|)',  # expected pattern
                 '^\\s*${v1} +${v2}\\s*${v3}',  # expected statement
                 True, False, False,
             ),
@@ -381,7 +381,7 @@ class TestLinePattern:
                     '125'
                 ],  # test data
                 'digits(var_v1)   letters(var_v2, or_empty)     digits(var_v3, or_empty)',  # user prepared data
-                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>[a-zA-Z]+|)\\s*(?P<v3>\\d+|)',  # expected pattern
+                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>([a-zA-Z]+)|)\\s*(?P<v3>(\\d+)|)',  # expected pattern
                 '^\\s*${v1}\\s*${v2}\\s*${v3}',  # expected statement
                 True, False, False,
             ),
@@ -392,7 +392,7 @@ class TestLinePattern:
                     '125              '
                 ],  # test data
                 'digits(var_v1)   letters(var_v2, or_empty)     digits(var_v3, or_empty)  ',  # user prepared data
-                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>[a-zA-Z]+|)\\s*(?P<v3>\\d+|)\\s*',  # expected pattern
+                '^\\s*(?P<v1>\\d+)\\s*(?P<v2>([a-zA-Z]+)|)\\s*(?P<v3>(\\d+)|)\\s*',  # expected pattern
                 '^\\s*${v1}\\s*${v2}\\s*${v3}\\s*',  # expected statement
                 True, False, False,
             ),
