@@ -216,8 +216,7 @@ non_wses_group: *non_whitespaces_group
 
 punctuation: &punctuation
   description: a pattern to match a punctuation.
-  pattern: |-
-    [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]
+  pattern: "[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]"
   positive_test: "."
   negative_test: "a"
 
@@ -225,8 +224,7 @@ punct: *punctuation
 
 punctuations: &punctuations
   description: a pattern to match multiple punctuation.
-  pattern: |-
-    [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]+
+  pattern: "[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+"
   positive_test: [".", ".+-"]
   negative_test: "a"
 
@@ -234,8 +232,7 @@ puncts: *punctuations
 
 punctuations_or_phrase: &punctuations_or_phrase
   description: a pattern to match a group of multiple punctuation.
-  pattern: |-
-    [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]+( [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-])*
+  pattern: "[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+( [\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+)*"
   positive_test: [".+-", "--- +++"]
   negative_test: ["abc", "---  +++"]
 
@@ -243,8 +240,7 @@ puncts_zphrase: *punctuations_or_phrase
 
 punctuations_phrase: &punctuations_phrase
   description: a pattern to match a group of multiple punctuation.
-  pattern: |-
-    [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]+( +[!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-])+
+  pattern: "[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+( [\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+)+"
   positive_test: ["--- +++", "--- +++ ==="]
   negative_test: ["---", "---  +++"]
 
@@ -252,8 +248,7 @@ puncts_phrase: *punctuations_phrase
 
 punctuations_or_group: &punctuations_or_group
   description: a pattern to match a group of multiple punctuation.
-  pattern: |-
-    [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]+( +[!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-])*
+  pattern: "[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+( +[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+)*"
   positive_test: ["---", "---   +++ ==="]
   negative_test: ["-a-", "--1-  +c++"]
 
@@ -261,8 +256,7 @@ puncts_zgroup: *punctuations_or_group
 
 punctuations_group: &punctuations_group
   description: a pattern to match a group of multiple punctuation.
-  pattern: |-
-    [!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]+( +[!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-])+
+  pattern: "[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+( +[\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+)+"
   positive_test: ["--- +++", "---   +++ ==="]
   negative_test: ["---", "--1-  +c++"]
 
@@ -270,8 +264,7 @@ puncts_group: *punctuations_group
 
 non_punctuation: &non_punctuation
   description: a pattern to match a non-punctuation.
-  pattern: |-
-    [^!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]
+  pattern: "[^\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]"
   positive_test: ["a", "\n", " "]
   negative_test: "."
 
@@ -281,8 +274,7 @@ non_punct: *non_punctuation
 
 non_punctuations: &non_punctuations
   description: a pattern to match multiple non-punctuation.
-  pattern: |-
-    [^!\"#$%&\'()*+,./:;<=>?@\[\\\]\^_`{|}~-]+
+  pattern: "[^\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7e]+"
   positive_test: ["a", "today temperature is    73\n"]
   negative_test: "."
 
@@ -548,15 +540,27 @@ aword_group: *another_word_group
 
 agroup: *another_word_group
 
+graph:
+  description: a pattern to match a printable character.
+  pattern: "[\\x21-\\x7e]"
+  positive_test: ["a", ".", "+"]
+  negative_test: "\\x8f"
+
+graphs:
+  description: a pattern to match at least one printable character.
+  pattern: "[\\x21-\\x7e]+"
+  positive_test: ["a", "+-", "a1.b2"]
+  negative_test: "\\x8f"
+
 mixed_word:
   description: a pattern to match a mixed word that might include a punctuation.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*"
   positive_test: "abc@xyz.com"
   negative_test: "+-*/"
 
 mixed_word_or_phrase: &mixed_word_or_phrase
   description: a pattern to match at least one mixed-word.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*"
   positive_test: "email: abc@xyz.com"
   negative_test: "+-*/ -&^"
 
@@ -568,7 +572,7 @@ mixed_words: *mixed_word_or_phrase
 
 mixed_word_or_group: &mixed_word_or_group
   description: a pattern to match at least one mixed-word.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( +[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( +[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*"
   positive_test: "email: abc@xyz.com"
   negative_test: "+-*/ -&^"
 
@@ -578,7 +582,7 @@ mixed_zgword: *mixed_word_or_group
 
 mixed_word_phrase: &mixed_word_phrase
   description: a pattern to match at least two mixed-word.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)+"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)+"
   positive_test: "email: abc@xyz.com"
   negative_test: "+-*/ -&^"
 
@@ -586,7 +590,7 @@ mixed_pword: *mixed_word_phrase
 
 mixed_word_group: &mixed_word_group
   description: a pattern to match at least two mixed-word.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( +[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( +[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*"
   positive_test: "email: abc@xyz.com"
   negative_test: "+-*/ -&^"
 
@@ -618,13 +622,13 @@ another_flex_phrase:
 
 mixed_phrase:
   description: a pattern to match at least two mixed-word.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)+"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)+"
   positive_test: "email: abc@xyz.com"
   negative_test: "email:"
 
 flex_mixed_phrase:
   description: a pattern to match at least two mixed-word.
-  pattern: "[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( +[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)+"
+  pattern: "[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( +[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)+"
   positive_test: ["email: abc@xyz.com", "email:   abc@xyz.com"]
   negative_test: "email:"
 

@@ -69,7 +69,7 @@ def tc_info():
 
         Matched Result:
         --------------
-        pattern: (?P<file_type>\\S)(?P<file_permission>\\S+) (?P<hard_links>\\d+) (?P<file_owner>[a-zA-Z][a-zA-Z0-9]*) (?P<file_group>[a-zA-Z][a-zA-Z0-9]*) +(?P<file_size>\\d+) (?P<date>[a-zA-Z]{3} +\\d{1,2}) (?P<time>\\d+:\\d+) (?P<filename>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
+        pattern: (?P<file_type>\\S)(?P<file_permission>\\S+) (?P<hard_links>\\d+) (?P<file_owner>[a-zA-Z][a-zA-Z0-9]*) (?P<file_group>[a-zA-Z][a-zA-Z0-9]*) +(?P<file_size>\\d+) (?P<date>[a-zA-Z]{3} +\\d{1,2}) (?P<time>\\d+:\\d+) (?P<filename>[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*)
         matched: [{'file_type': '-', 'file_permission': 'rw-r--r--', 'hard_links': '1', 'file_owner': 'abc', 'file_group': 'staff', 'file_size': '133', 'date': 'Jun 10', 'time': '20:33', 'filename': 'README.md'}, {'file_type': '-', 'file_permission': 'rw-r--r--', 'hard_links': '1', 'file_owner': 'abc', 'file_group': 'staff', 'file_size': '1488', 'date': 'Jul 27', 'time': '00:48', 'filename': 'setup.py'}, {'file_type': 'd', 'file_permission': 'rwxr-xr-x', 'hard_links': '1', 'file_owner': 'abc', 'file_group': 'staff', 'file_size': '0', 'date': 'Jul  7', 'time': '15:33', 'filename': 'tests/'}]
         ----------
     """

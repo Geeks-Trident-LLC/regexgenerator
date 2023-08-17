@@ -22,49 +22,49 @@ class TestLinePattern:
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',  # noqa
                 'mixed_word() is choice(up, down, administratively down), line protocol is choice(up, down, administratively down)',    # noqa
-                '[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',   # noqa
+                '[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',   # noqa
                 False, False, False,
                 True
             ),
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',  # noqa
                 'mixed_word() is choice(up, down, administratively down), line protocol is choice(up, down, administratively down)',    # noqa
-                '[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',     # noqa
+                '[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',     # noqa
                 False, False, False,
                 True
             ),
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',      # noqa
                 'mixed_word() is choice(up, down, administratively down), line protocol is choice(up, down, administratively down)',    # noqa
-                '(?i)[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',     # noqa
+                '(?i)[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',     # noqa
                 False, False, True,
                 True
             ),
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',      # noqa
                 'mixed_word() is choice(up, down, administratively down), line protocol is choice(up, down, administratively down)',    # noqa
-                '(?i)^\\s*[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',    # noqa
+                '(?i)^\\s*[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))',    # noqa
                 True, False, True,
                 True
             ),
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',      # noqa
                 'mixed_word() is choice(up, down, administratively down), line protocol is choice(up, down, administratively down)',    # noqa
-                '(?i)^\\s*[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))\\s*$',   # noqa
+                '(?i)^\\s*[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]* is (up|down|(administratively down)), line protocol is (up|down|(administratively down))\\s*$',   # noqa
                 True, True, True,
                 True
             ),
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',      # noqa
                 'mixed_word(var_interface_name) is choice(up, down, administratively down, var_interface_status), line protocol is choice(up, down, administratively down, var_protocol_status)',   # noqa
-                '(?i)^\\s*(?P<interface_name>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*) is (?P<interface_status>up|down|(administratively down)), line protocol is (?P<protocol_status>up|down|(administratively down))\\s*$',    # noqa
+                '(?i)^\\s*(?P<interface_name>[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*) is (?P<interface_status>up|down|(administratively down)), line protocol is (?P<protocol_status>up|down|(administratively down))\\s*$',    # noqa
                 True, True, True,
                 True
             ),
             (
                 'TenGigE0/0/0/1 is administratively down, line protocol is administratively down',      # noqa
                 'mixed_word(var_interface_name) is words(var_interface_status), line protocol is words(var_protocol_status)',   # noqa
-                '(?i)(?P<interface_name>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*) is (?P<interface_status>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*), line protocol is (?P<protocol_status>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)',    # noqa
+                '(?i)(?P<interface_name>[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*) is (?P<interface_status>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*), line protocol is (?P<protocol_status>[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)',    # noqa
                 False, False, True,
                 True
             ),
@@ -274,14 +274,14 @@ class TestLinePattern:
             (
                 'file1.txt',  # test data
                 'mixed_words(var_file_name) data(->, or_empty) mixed_words(var_link_name, or_empty) end()',
-                '(?i)(?P<file_name>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)\\s*(->|)\\s*(?P<link_name>([\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)|)$',  # noqa
+                '(?i)(?P<file_name>[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*)\\s*(->|)\\s*(?P<link_name>([\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*)|)$',  # noqa
                 False, False, True,
                 True
             ),
             (
                 "'My Documents' -> /c/Users/test/Documents/",  # test data
                 'mixed_words(var_file_name) data(->, or_empty) mixed_words(var_link_name, or_empty) end()',
-                '(?i)(?P<file_name>[\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)\\s*(->|)\\s*(?P<link_name>([\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)|)$',    # noqa
+                '(?i)(?P<file_name>[\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*)\\s*(->|)\\s*(?P<link_name>([\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z0-9][\\x21-\\x7e]*)*)|)$',    # noqa
                 False, False, True,
                 True
             ),
