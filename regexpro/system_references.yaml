@@ -670,13 +670,13 @@ digits:
 
 number:
   description: a pattern to match a number.
-  pattern: "(\\d+)?[.]?\\d+"
+  pattern: "\\d*[.]?\\d+"
   positive_test: ["69", "69.95", "0.95", ".95"]
   negative_test: ["ab"]
 
 signed_number:
   description: a pattern to match a signed number.
-  pattern: "[+(-]?(\\d+)?[.]?\\d+[)]?"
+  pattern: "[+(-]?\\d*[.]?\\d+[)]?"
   positive_test: ["69", "-69.95", "+0.95", "(.95)"]
   negative_test: ["a.b"]
 
