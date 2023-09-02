@@ -57,7 +57,7 @@ def do_soft_regex_escape(pattern, is_validated=True):
     EscapePatternError: if error during validating pattern.
     """
     pattern = str(pattern)
-    chk1, chk2 = string.punctuation + ' ', '^$.?*+|{}[]()'
+    chk1, chk2 = string.punctuation + ' ', '^$.?*+|{}[]()\\'
     result = []
     for char in pattern:
         echar = re.escape(char)
