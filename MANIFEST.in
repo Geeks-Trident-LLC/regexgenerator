@@ -1,1 +1,1 @@
-recursive-include regexpro *.py *.yaml
+recursive-include regexbuilder *.py *.yaml
