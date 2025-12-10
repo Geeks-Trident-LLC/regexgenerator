@@ -8,7 +8,8 @@ setup(
     version='0.4.10',
     license='BSD-3-Clause',
     license_files=['LICENSE'],
-    description='The application to generate regex pattern.',
+    description='The application enables end-users to generate regex patterns '
+                'from plain text or automatically create them based on provided data.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     author='Tuyen Mathew Duong',
@@ -32,17 +33,37 @@ setup(
         ]
     },
     classifiers=[
+        # natural language
+        'Natural Language :: English',
+        # intended audience
         'Intended Audience :: Developers',
+        'Intended Audience :: Education',
+        'Intended Audience :: End Users/Desktop',
+        'Intended Audience :: Information Technology',
+        'Intended Audience :: Manufacturing',
+        'Intended Audience :: Other Audience',
+        'Intended Audience :: Science/Research',
+        # operating system
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: POSIX :: Linux',
         'Operating System :: Microsoft :: Windows',
-        'License :: Other/Proprietary License',
+        # license
+        'License :: BSD License',
+        # programming language
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
+        # topic
         'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Software Development :: Code Generators',
+        'Topic :: Software Development :: Quality Assurance',
+        'Topic :: Software Development :: Testing',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Text Processing',
     ],
 )
