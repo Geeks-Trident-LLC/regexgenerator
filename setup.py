@@ -16,7 +16,7 @@ setup(
     author_email='tuyen@geekstrident.com',
     maintainer='Tuyen Mathew Duong',
     maintainer_email='tuyen@geekstrident.com',
-    install_requires=['pyyaml', ],
+    install_requires=['pyyaml', 'genericlib'],
     url='https://github.com/Geeks-Trident-LLC/regexbuilder',
     packages=find_packages(
         exclude=(
@@ -29,7 +29,7 @@ setup(
     entry_points={
         'console_scripts': [
             'regexbuilder = regexbuilder.main:execute',
-            'regex-pro = regexbuilder.application:execute',
+            'regex-builder = regexbuilder.application:execute',
         ]
     },
     classifiers=[
