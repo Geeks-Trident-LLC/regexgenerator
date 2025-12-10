@@ -1,4 +1,4 @@
-"""Module containing the logic for the regexpro entry-points."""
+"""Module containing the logic for the regexbuilder entry-points."""
 
 import sys
 import argparse
@@ -6,18 +6,18 @@ import re
 import yaml
 # from os import path
 # from textwrap import dedent
-from regexpro.application import Application
-from regexpro import RegexBuilder
-from regexpro.core import enclose_string
+from regexbuilder.application import Application
+from regexbuilder import RegexBuilder
+from regexbuilder.core import enclose_string
 
-# from regexpro.utils import Printer
-# from regexpro.constant import ECODE
+# from regexbuilder.utils import Printer
+# from regexbuilder.constant import ECODE
 from genericlib import Printer
 from genericlib import ECODE
 
 
 def run_gui_application(options):
-    """Run regexpro GUI application.
+    """Run regexbuilder GUI application.
 
     Parameters
     ----------
@@ -25,7 +25,7 @@ def run_gui_application(options):
 
     Returns
     -------
-    None: will invoke ``regexpro.Application().run()`` and ``sys.exit(ECODE.SUCCESS)``
+    None: will invoke ``regexbuilder.Application().run()`` and ``sys.exit(ECODE.SUCCESS)``
     if end user requests `--gui`
     """
     if options.gui:
@@ -37,7 +37,7 @@ def run_gui_application(options):
 def show_dependency(options):
     if options.dependency:
         from platform import uname, python_version
-        from regexpro.config import Data
+        from regexbuilder.config import Data
         lst = [
             Data.main_app_text,
             'Platform: {0.system} {0.release} - Python {1}'.format(
@@ -56,19 +56,19 @@ def show_dependency(options):
 
 
 class Cli:
-    """regexpro console CLI application."""
+    """regexbuilder console CLI application."""
 
     def __init__(self):
 
         parser = argparse.ArgumentParser(
-            prog='regexpro',
+            prog='regexbuilder',
             usage='%(prog)s [options]',
             description='%(prog)s application',
         )
 
         parser.add_argument(
             '--gui', action='store_true',
-            help='Launch a regexpro GUI application.'
+            help='Launch a regexbuilder GUI application.'
         )
 
         parser.add_argument(
@@ -102,7 +102,7 @@ class Cli:
 
         parser.add_argument(
             '-d', '--dependency', action='store_true',
-            help='Show RegexPro dependent package(s).'
+            help='Show RegexBuilder dependent package(s).'
         )
 
         self.parser = parser
@@ -249,6 +249,6 @@ class Cli:
 
 
 def execute():
-    """Execute regexpro console CLI."""
+    """Execute regexbuilder console CLI."""
     app = Cli()
     app.run()

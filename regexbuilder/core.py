@@ -1,15 +1,15 @@
 import re
 from datetime import datetime
-from regexpro import LinePattern
-from regexpro import MultilinePattern
-from regexpro.exceptions import RegexBuilderError
-from regexpro.exceptions import PatternReferenceError
-from regexpro.exceptions import NoUserDataError
-from regexpro.exceptions import NoTestDataError
+from regexbuilder import LinePattern
+from regexbuilder import MultilinePattern
+from regexbuilder.exceptions import RegexBuilderError
+from regexbuilder.exceptions import PatternReferenceError
+from regexbuilder.exceptions import NoUserDataError
+from regexbuilder.exceptions import NoTestDataError
 
-from regexpro.config import version
-from regexpro.collection import REF
-import regexpro
+from regexbuilder.config import version
+from regexbuilder.collection import REF
+import regexbuilder
 from copy import copy, deepcopy
 from collections import OrderedDict
 from textwrap import indent
@@ -19,8 +19,8 @@ BASELINE_REF = deepcopy(REF)
 
 
 def is_pro_edition():
-    """return True if regexpro is Pro or Enterprise edition"""
-    chk = regexpro.edition == 'Pro' or regexpro.edition == 'Enterprise'
+    """return True if regexbuilder is Pro or Enterprise edition"""
+    chk = regexbuilder.edition == 'Pro' or regexbuilder.edition == 'Enterprise'
     return chk
 
 
@@ -92,7 +92,7 @@ def create_docstring(test_framework='unittest',
 
     lst = list()
     author = author or company
-    lst.append(fmt.format(lang, test_framework, regexpro.edition))
+    lst.append(fmt.format(lang, test_framework, regexbuilder.edition))
     lst.append('')
     author and lst.append(fmt1.format(author))
     email and lst.append(fmt2.format(email))

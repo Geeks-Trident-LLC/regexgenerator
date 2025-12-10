@@ -1,7 +1,7 @@
 import pytest       # noqa
 import re
 
-from regexpro import LinePattern
+from regexbuilder import LinePattern
 
 
 class TestLinePattern:

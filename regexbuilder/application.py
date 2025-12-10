@@ -5,7 +5,7 @@ try:
 except ModuleNotFoundError:
     import sys
     from platform import python_version as py_version
-    items = ["Failed to launch RegexPro application because",
+    items = ["Failed to launch RegexBuilder application because",
              "Python{} binary doesn't have tkinter module.".format(py_version()),
              "Please install tkinter module and try it again."]
     max_len = max(len(item) for item in items)
@@ -23,15 +23,15 @@ from tkinter.font import Font
 from pathlib import Path
 import webbrowser
 from textwrap import dedent
-from regexpro import RegexBuilder
-from regexpro.collection import REF
-from regexpro.collection import PatternReference
-from regexpro import version
-from regexpro import edition
-from regexpro.core import enclose_string
-from regexpro import PatternBuilder
+from regexbuilder import RegexBuilder
+from regexbuilder.collection import REF
+from regexbuilder.collection import PatternReference
+from regexbuilder import version
+from regexbuilder import edition
+from regexbuilder.core import enclose_string
+from regexbuilder import PatternBuilder
 
-from regexpro.config import Data
+from regexbuilder.config import Data
 
 import yaml
 import re

@@ -1,11 +1,11 @@
-from regexpro import version as expected_version
+from regexbuilder import version as expected_version
 from subprocess import check_output
 from subprocess import STDOUT
 import re
 from pathlib import PurePath
 
-from regexpro import LinePattern
-from regexpro.config import Data
+from regexbuilder import LinePattern
+from regexbuilder.config import Data
 
 import pytest       # noqa
 
@@ -25,17 +25,17 @@ def get_package_info(pkg_name):
         return output
 
 
-pkg_info = get_package_info('regexpro')
+pkg_info = get_package_info('regexbuilder')
 
 installed_pkg_check = pytest.mark.skipif(
-    pkg_info.startswith('regexpro @ '),
-    reason='skip because regexpro installed locally <<{}>>.'.format(pkg_info)
+    pkg_info.startswith('regexbuilder @ '),
+    reason='skip because regexbuilder installed locally <<{}>>.'.format(pkg_info)
 )
 
 
 @installed_pkg_check
 def test_installed_version_synchronization():
-    pattern = LinePattern('data(regexpro==)mixed_word(var_version)end()')
+    pattern = LinePattern('data(regexbuilder==)mixed_word(var_version)end()')
     match = re.match(pattern, pkg_info.strip())     # noqa
     if match:
         installed_version = match.group('version')

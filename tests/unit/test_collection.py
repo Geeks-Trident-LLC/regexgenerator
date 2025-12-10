@@ -1,7 +1,7 @@
 import pytest       # noqa
 
-from regexpro import PatternReference
-from regexpro import TextPattern
+from regexbuilder import PatternReference
+from regexbuilder import TextPattern
 
 
 class TestPatternReference:

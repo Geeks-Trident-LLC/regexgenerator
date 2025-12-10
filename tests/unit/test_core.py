@@ -1,10 +1,10 @@
 import pytest
 from textwrap import dedent
-from regexpro import RegexBuilder
-from regexpro import DynamicTestScriptBuilder
-from regexpro import add_reference
-from regexpro import remove_reference
-from regexpro.exceptions import PatternReferenceError
+from regexbuilder import RegexBuilder
+from regexbuilder import DynamicTestScriptBuilder
+from regexbuilder import add_reference
+from regexbuilder import remove_reference
+from regexbuilder.exceptions import PatternReferenceError
 from datetime import datetime
 from pathlib import Path, PurePath
 

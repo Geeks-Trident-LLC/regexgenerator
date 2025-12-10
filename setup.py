@@ -1,10 +1,10 @@
-"""Packaging regexpro."""
+"""Packaging regexbuilder."""
 
 from setuptools import setup, find_packages
 
 
 setup(
-    name='regexpro',
+    name='regexbuilder',
     version='0.4.10',
     license='BSD-3-Clause',
     license_files=['LICENSE'],
@@ -16,7 +16,7 @@ setup(
     maintainer='Tuyen Mathew Duong',
     maintainer_email='tuyen@geekstrident.com',
     install_requires=['pyyaml', ],
-    url='https://github.com/Geeks-Trident-LLC/regexpro',
+    url='https://github.com/Geeks-Trident-LLC/regexbuilder',
     packages=find_packages(
         exclude=(
             'tests*', 'testing*', 'examples*',
@@ -27,8 +27,8 @@ setup(
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'regexpro = regexpro.main:execute',
-            'regex-pro = regexpro.application:execute',
+            'regexbuilder = regexbuilder.main:execute',
+            'regex-pro = regexbuilder.application:execute',
         ]
     },
     classifiers=[

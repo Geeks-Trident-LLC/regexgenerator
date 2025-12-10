@@ -1,4 +1,4 @@
-"""Module containing the exception class for regexpro."""
+"""Module containing the exception class for regexbuilder."""
 
 
 class PatternError(Exception):
