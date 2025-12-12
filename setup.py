@@ -10,7 +10,9 @@ setup(
     version="0.5.0a0",  # pre-beta versioning to signal alpha/beta status
     license="BSD-3-Clause",
     license_files=["LICENSE"],
-    description="Utility to generate regex patterns from plain text or structured input.",
+    description="A versatile utility that generates regex patterns seamlessly"
+                " from plain text or structured input, simplifying validation, "
+                "filtering, and pattern‑matching workflows.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Tuyen Mathew Duong",
@@ -32,7 +34,6 @@ setup(
     },
     python_requires=">=3.9",
     include_package_data=True,
-    test_suite="tests",
     entry_points={
         "console_scripts": [
             "regexbuilder = regexbuilder.main:execute",
@@ -43,6 +44,8 @@ setup(
         ]
     },
     classifiers=[
+        # development status
+        "Development Status :: 3 - Alpha",
         # natural language
         "Natural Language :: English",
         # intended audience
@@ -57,8 +60,6 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX :: Linux",
         "Operating System :: Microsoft :: Windows",
-        # license
-        "License :: OSI Approved :: BSD License",
         # programming language
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
@@ -66,8 +67,6 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Programming Language :: Python :: 3.14",
         # topic
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Code Generators",
@@ -75,8 +74,6 @@ setup(
         "Topic :: Software Development :: Testing",
         "Topic :: Scientific/Engineering",
         "Topic :: Text Processing",
-        # development status
-        "Development Status :: 3 - Alpha",
     ],
     keywords="regex, regex builder, regexbuilder, text parsing, automation, regular express",
 )
