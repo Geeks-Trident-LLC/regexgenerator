@@ -1,45 +1,53 @@
-"""Module containing the exception class for regexapp."""
+"""
+Exception classes for the regexapp project.
+
+This module defines a hierarchy of custom exceptions used throughout
+regexapp to handle errors related to pattern conversion, template
+building, user/test data validation, and regex construction. These
+exceptions provide more granular error reporting than built-in
+exceptions, making debugging and error handling clearer.
+"""
 
 
 class PatternError(Exception):
-    """Use to capture error during pattern conversion."""
+    """Base exception for errors encountered during pattern conversion."""
 
 
 class EscapePatternError(PatternError):
-    """Use to capture error during performing do_soft_regex_escape"""
+    """Raised when an error occurs while performing soft regex escaping."""
 
 
 class PatternReferenceError(PatternError):
-    """Use to capture error for PatternReference instance"""
+    """Raised when a PatternReference instance fails or is invalid."""
 
 
 class TextPatternError(Exception):
-    """Use to capture error during pattern conversion."""
+    """Raised when text-based pattern conversion fails."""
 
 
 class ElementPatternError(Exception):
-    """Use to capture error during pattern conversion."""
+    """Raised when element-level pattern conversion fails."""
 
 
 class LinePatternError(PatternError):
-    """Use to capture error during pattern conversion."""
+    """Raised when line-based pattern conversion fails."""
 
 
 class MultilinePatternError(PatternError):
-    """Use to capture error during pattern conversion."""
+    """Raised when multiline pattern conversion fails."""
 
 
 class PatternBuilderError(PatternError):
-    """Use to capture error during pattern conversion."""
+    """Raised when errors occur during pattern building operations."""
 
 
 class RegexBuilderError(Exception):
-    """Use to capture error for RegexBuilder class."""
+    """Raised when the RegexBuilder class encounters an error."""
 
 
 class NoUserDataError(Exception):
-    """Use to capture error if there is no provided user data."""
+    """Raised when required user data is missing or not provided."""
 
 
 class NoTestDataError(Exception):
-    """Use to capture error if there is no provided test data."""
+    """Raised when required test data is missing or not provided."""
