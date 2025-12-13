@@ -326,14 +326,15 @@ class TextPattern(str):
     text (str): a text.
     as_is (bool): keeping text an AS-IS pattern.
 
-    Properties
-    ----------
-    is_empty (bool): check if a pattern matches empty string.
-    is_empty_or_whitespace (bool): check if a pattern matches empty string or whitespace
-    is_whitespace (bool): check if a pattern matches whitespace
-
     Methods
     -------
+    is_empty() -> bool
+        check if a pattern matches empty string.
+    is_empty_or_whitespace() -> bool
+        check if a pattern matches empty string or whitespace
+    is_whitespace() -> bool
+        check if a pattern matches whitespace
+
     TextPattern.get_pattern(text) -> str
     lstrip(chars=None) -> TextPattern
     rstrip(chars=None) -> TextPattern
