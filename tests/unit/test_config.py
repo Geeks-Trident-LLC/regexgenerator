@@ -25,17 +25,17 @@ def get_package_info(pkg_name):
         return output
 
 
-pkg_info = get_package_info('regexbuilder')
+pkg_info = get_package_info('regexapp')
 
 installed_pkg_check = pytest.mark.skipif(
-    pkg_info.startswith('regexbuilder @ '),
-    reason='skip because regexbuilder installed locally <<{}>>.'.format(pkg_info)
+    pkg_info.startswith('regexapp @ '),
+    reason='skip because regexapp installed locally <<{}>>.'.format(pkg_info)
 )
 
 
 @installed_pkg_check
 def test_installed_version_synchronization():
-    pattern = LinePattern('data(regexbuilder==)mixed_word(var_version)end()')
+    pattern = LinePattern('data(regexapp==)mixed_word(var_version)end()')
     match = re.match(pattern, pkg_info.strip())     # noqa
     if match:
         installed_version = match.group('version')
