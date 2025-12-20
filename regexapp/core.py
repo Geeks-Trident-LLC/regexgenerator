@@ -496,48 +496,68 @@ def remove_reference(name=''):
 
 
 class DynamicTestScriptBuilder:
-    """Dynamically generate test script
+    """
+    Dynamically generate test scripts for multiple frameworks.
+
+    This builder class constructs test scripts (unittest, pytest,
+    Robot Framework, or generic Python snippets) based on provided
+    regex patterns and test data. It supports both direct use of a
+    `RegexBuilder` instance and a simplified list format containing
+    user_data and test_data. The builder automates test name generation,
+    pattern compilation, and script creation.
 
     Attributes
     ----------
-    test_info (RegexBuilder, list): can be either RegexBuilder instance or
-            a list of string.  If test_info is a list of string, it must follow
-            this format that contain two items: user_data and test_data.
-    test_name (str): a predefined test name.  Default is empty.
-            + unittest will use either predefined test name or
-                generated test name from test data
-            + pytest will use predefined test name.
-            + robotframework test will depend on test workflow.  It might be
-                either used predefined test name or generated test name.
-    is_line (bool): a flag to use LinePattern.  Default is False.
-    max_words (int): total number of words for generating test name.
-            Default is 6 words.
-    test_cls_name (str): a test class name for test script.  This test class
-            name only be applicable for unittest or pytest.
-            Default is TestDynamicGenTestScript.
-    author (str): author name.  Default is empty.
-    email (str): author name.  Default is empty.
-    company (str): company name.  Default is empty.
-    filename (str): save a generated test script to file name.
-    kwargs (dict): an optional keyword arguments.
-            Community edition will use the following keywords:
-                prepended_ws, appended_ws, ignore_case
-            Pro or Enterprise edition will be deprecated and removed in the
-                upcoming migration to regexapp version 1.x.
-                prepended_ws, appended_ws, ignore_case, other keywords
-
-    lst_of_tests (list): a list of test.
-    test_data (str): a test data
-    patterns (list): a list of patterns.
+    test_info : RegexBuilder or list
+        Either a `RegexBuilder` instance or a two‑element list
+        containing [user_data, test_data].
+    test_name : str
+        Predefined test name. Defaults to empty string.
+        - unittest: uses predefined name or generates one from test data.
+        - pytest: uses predefined name.
+        - Robot Framework: may use either predefined or generated name.
+    is_line : bool
+        Flag to enable LinePattern. Defaults to False.
+    max_words : int
+        Maximum number of words used when generating a test name.
+        Default is 6.
+    test_cls_name : str
+        Name of the test class for unittest/pytest scripts.
+        Default is "TestDynamicGenTestScript".
+    author : str
+        Author name. Defaults to empty string.
+    email : str
+        Author email. Defaults to empty string.
+    company : str
+        Company name. Defaults to empty string.
+    filename : str
+        File name to save the generated test script.
+    kwargs : dict
+        Optional keyword arguments. Community edition supports:
+        `prepended_ws`, `appended_ws`, `ignore_case`.
+        Pro/Enterprise keywords are deprecated in regexapp v1.x.
+    lst_of_tests : list
+        Compiled list of test cases, each containing test name,
+        test data, prepared data, and pattern.
+    test_data : str
+        Test data string used for validation.
+    patterns : list
+        List of regex patterns generated from user data.
 
     Methods
     -------
     compile_test_info() -> None
+        Prepare a list of test cases from `test_info`.
     generate_test_name(test_data='') -> str
+        Generate a valid test name from provided test data.
     create_unittest() -> str
+        Generate a Python unittest script.
     create_pytest() -> str
+        Generate a Python pytest script.
     create_rf_test() -> str
+        Generate a Robot Framework test script (not yet implemented).
     create_python_test() -> str
+        Generate a generic Python test script snippet.
     """
     def __init__(self, test_info=None, test_name='', is_line=False,
                  max_words=6, test_cls_name='TestDynamicGenTestScript',
@@ -627,15 +647,28 @@ class DynamicTestScriptBuilder:
             self.lst_of_tests.append([test_name, test_data, prepared_data, pattern])
 
     def generate_test_name(self, test_data=''):
-        """generate test name from test_data
+        """
+        Generate a valid test function name from provided test data.
+
+        This method normalizes the input string, extracts up to `max_words`
+        words, and converts them into a safe identifier suitable for use
+        as a test function name. If a predefined `self.test_name` exists,
+        it will be used instead. The final name is guaranteed to start
+        with the prefix ``test_``.
 
         Parameters
         ----------
-        test_data (str): a test data.  Default is empty.
+        test_data : str, optional
+            Raw test data string used to derive the test name.
+            Defaults to an empty string.
 
         Returns
         -------
-        str: a test name
+        str
+            A sanitized test name string that:
+            - Contains only alphanumeric characters and underscores.
+            - Is truncated to at most `max_words` words.
+            - Always begins with ``test_``.
         """
         pat = r'[^0-9a-zA-Z]*\s+[^0-9a-zA-Z]*'
         test_data = str(test_data).lower().strip()
@@ -648,36 +681,64 @@ class DynamicTestScriptBuilder:
         return test_name
 
     def create_unittest(self):
-        """dynamically generate Python unittest script
+        """
+        Generate a Python unittest script from the current builder state.
+
+        This method uses the `UnittestBuilder` to construct a complete
+        unittest script based on the test cases and configuration stored
+        in the `DynamicTestScriptBuilder` instance. The generated script
+        is also saved to the file specified by `self.filename`.
 
         Returns
         -------
-        str: python unittest script
+        str
+            A string containing the full Python unittest script.
+            The script is written to disk if `self.filename` is set.
         """
-
         factory = UnittestBuilder(self)
         test_script = factory.create()
         save_file(self.filename, test_script)
         return test_script
 
     def create_pytest(self):
-        """dynamically generate Python pytest script
+        """
+        Generate a Python pytest script from the current builder state.
+
+        This method uses the `PytestBuilder` to construct a complete
+        pytest script based on the test cases and configuration stored
+        in the `DynamicTestScriptBuilder` instance. The generated script
+        is also saved to the file specified by `self.filename`.
+
         Returns
         -------
-        str: python pytest script
+        str
+            A string containing the full Python pytest script.
+            The script is written to disk if `self.filename` is set.
         """
-
         factory = PytestBuilder(self)
         test_script = factory.create()
         save_file(self.filename, test_script)
         return test_script
 
     def create_rf_test(self):     # noqa
-        """dynamically generate Robotframework test script
+        """
+        Generate a Robot Framework test script.
+
+        This method is intended to construct a Robot Framework test script
+        based on the current builder state (test cases, configuration, and
+        patterns). At present, the implementation is not available and will
+        raise a ``NotImplementedError``.
 
         Returns
         -------
-        str: Robotframework test script
+        str
+            A Robot Framework test script string once implemented.
+
+        Raises
+        ------
+        NotImplementedError
+            Always raised until Robot Framework test generation is
+            implemented.
         """
         msg = 'TODO: need to implement generated_rf_test for robotframework'
         NotImplementedError(msg)
@@ -1237,8 +1298,10 @@ class NonCommercialUseCls:
         test_data = str(test_data)
         if not test_data:
             raise NoTestDataError("Please provide valid test data.")
-        func = self.get_tresult_v2 if self.is_multi_test_data else self.get_tresult_v1
-        test_result = func(test_data)
+        if self.is_multi_test_data:
+            test_result = self.get_tresult_v2(test_data)
+        else:
+            test_result = self.get_tresult_v1(test_data)
         return test_result
 
     def get_tresult_v1(self, test_data):

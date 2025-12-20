@@ -1,30 +1,41 @@
-"""Module containing the logic for the regexapp entry-points."""
+"""
+Entry-point logic for the regexapp project.
+
+This module provides the command-line interface (CLI) and GUI entry
+points for regexapp. It defines helper functions and the `Cli` class
+to parse arguments, validate user input, build regex patterns, generate
+test scripts, run tests, and display dependency information.
+
+The entry-points are designed to support both interactive GUI usage
+and automated CLI workflows, ensuring flexibility for developers and
+end users.
+"""
 
 import sys
 import argparse
 import re
 import yaml
-# from os import path
-# from textwrap import dedent
 from regexapp.application import Application
 from regexapp import RegexBuilder
 from regexapp.core import enclose_string
 
-from genericlib import Printer
 from genericlib import ECODE
 
 
 def run_gui_application(options):
-    """Run regexapp GUI application.
+    """
+    Launch the regexapp GUI application if requested.
 
     Parameters
     ----------
-    options (argparse.Namespace): argparse.Namespace instance.
+    options : argparse.Namespace
+        Parsed command-line options. Must contain the `gui` flag.
 
     Returns
     -------
-    None: will invoke ``regexapp.Application().run()`` and ``sys.exit(ECODE.SUCCESS)``
-    if end user requests `--gui`
+    None
+        Invokes ``Application().run()`` and exits with
+        ``ECODE.SUCCESS`` if `--gui` is specified.
     """
     if options.gui:
         app = Application()
@@ -33,6 +44,20 @@ def run_gui_application(options):
 
 
 def show_dependency(options):
+    """
+    Display dependency information if requested.
+
+    Parameters
+    ----------
+    options : argparse.Namespace
+        Parsed command-line options. Must contain the `dependency` flag.
+
+    Returns
+    -------
+    None
+        Prints platform and dependency details to stdout and exits
+        with ``ECODE.SUCCESS`` if `--dependency` is specified.
+    """
     if options.dependency:
         from platform import uname, python_version
         from regexapp.config import Data
@@ -49,12 +74,55 @@ def show_dependency(options):
             lst.append('  + Package: {0[package]}'.format(pkg))
             lst.append('             {0[url]}'.format(pkg))
 
-        Printer.print(lst)
+        width = max(len(item) for item in lst)
+        txt = '\n'.join('| {1:{0}} |'.format(width, item) for item in lst)
+        print('+-{0}-+\n{1}\n+-{0}-+'.format(width * '-', txt))
+        sys.exit(ECODE.SUCCESS)
+
+
+def show_version(options):
+    """
+    Display the current regexapp version and exit.
+
+    This function checks whether the `--version` flag was provided
+    in the parsed CLI options. If so, it imports the `version`
+    string from the `regexapp` package, prints it to stdout, and
+    terminates the process with a success exit code.
+
+    Parameters
+    ----------
+    options : argparse.Namespace
+        Parsed command-line options. Must contain the `version` flag.
+
+    Returns
+    -------
+    None
+        Prints the application version and exits with
+        ``ECODE.SUCCESS`` if `--version` is specified.
+    """
+    if options.version:
+        from regexapp import version
+        print(f'regexapp {version}')
         sys.exit(ECODE.SUCCESS)
 
 
 class Cli:
-    """regexapp console CLI application."""
+    """
+    Console interface for regexapp.
+
+    This class encapsulates the command-line interface logic, including
+    argument parsing, validation, regex pattern generation, test script
+    creation, and test execution.
+
+    Attributes
+    ----------
+    parser : argparse.ArgumentParser
+        Argument parser configured with regexapp options.
+    options : argparse.Namespace
+        Parsed command-line arguments.
+    kwargs : dict
+        Additional keyword arguments loaded from configuration.
+    """
 
     def __init__(self):
 
@@ -100,7 +168,12 @@ class Cli:
 
         parser.add_argument(
             '-d', '--dependency', action='store_true',
-            help='Show RegexBuilder dependent package(s).'
+            help='Show RegexApp dependent package(s).'
+        )
+
+        parser.add_argument(
+            '-v', '--version', action='store_true',
+            help='Show RegexApp version.'
         )
 
         self.parser = parser
@@ -108,12 +181,15 @@ class Cli:
         self.kwargs = dict()
 
     def validate_cli_flags(self):
-        """Validate argparse `options`.
+        """
+        Validate CLI flags and load external data if specified.
 
         Returns
         -------
-        bool: show ``self.parser.print_help()`` and call ``sys.exit(ECODE.BAD)`` if
-        user_data flag is empty, otherwise, return True
+        bool
+            True if validation succeeds. If required flags are missing
+            or files cannot be loaded, prints an error/help message and
+            exits with ``ECODE.BAD``.
         """
 
         if not self.options.user_data:
@@ -179,7 +255,16 @@ class Cli:
         return True
 
     def build_regex_pattern(self):
-        """Build regex pattern"""
+        """
+        Build and print regex patterns from user data.
+
+        Returns
+        -------
+        None
+            Prints generated regex patterns to stdout and exits with
+            ``ECODE.SUCCESS`` if successful. Exits with ``ECODE.BAD``
+            if no patterns can be generated.
+        """
         factory = RegexBuilder(
             user_data=self.options.user_data,
             **self.kwargs
@@ -205,7 +290,16 @@ class Cli:
             sys.exit(ECODE.BAD)
 
     def build_test_script(self):
-        """Build test script"""
+        """
+        Build and print a test script for the chosen platform.
+
+        Returns
+        -------
+        None
+            Generates an unittest/pytest/snippet script based on CLI
+            options, prints it to stdout, and exits with ``ECODE.SUCCESS``.
+            Falls back to regex pattern generation if no platform is set.
+        """
         platform = self.options.platform.lower()
         if platform:
             tbl = dict(unittest='create_unittest', pytest='create_pytest')
@@ -223,7 +317,15 @@ class Cli:
             self.build_regex_pattern()
 
     def run_test(self):
-        """Run test"""
+        """
+        Execute regex pattern tests against provided test data.
+
+        Returns
+        -------
+        None
+            Runs tests and prints results to stdout. Exits with
+            ``ECODE.SUCCESS`` upon completion.
+        """
         if self.options.test:
             factory = RegexBuilder(
                 user_data=self.options.user_data,
@@ -236,7 +338,17 @@ class Cli:
             sys.exit(ECODE.SUCCESS)
 
     def run(self):
-        """Take CLI arguments, parse it, and process."""
+        """
+        Process CLI arguments and execute the requested workflow.
+
+        Returns
+        -------
+        None
+            Handles dependency display, GUI launch, validation,
+            regex generation, test execution, and script creation
+            based on CLI flags.
+        """
+        show_version(self.options)
         show_dependency(self.options)
         run_gui_application(self.options)
         self.validate_cli_flags()
@@ -247,6 +359,13 @@ class Cli:
 
 
 def execute():
-    """Execute regexapp console CLI."""
+    """
+    Execute the regexapp CLI entry-point.
+
+    Returns
+    -------
+    None
+        Instantiates the `Cli` class and runs the application.
+    """
     app = Cli()
     app.run()

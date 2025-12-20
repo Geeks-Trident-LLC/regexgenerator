@@ -2,7 +2,7 @@
 
 The **Regex App** application is a powerful utility designed to simplify the creation of regular expression patterns. Instead of manually writing complex regex syntax, developers can generate accurate patterns directly from snippets or structured input data. This reduces the time spent on repetitive coding tasks and minimizes errors.  
 
-Regex App plays a key role in supporting the **TextFSMGenerator**, which builds TextFSM templates for parsing and structuring unformatted text. By integrating with Regexapp, TextFSMGenerator can more efficiently produce templates that capture the desired data fields, making text parsing faster, cleaner, and more reliable.  
+Regex App plays a key role in supporting the **TextFSM Generator**, which builds TextFSM templates for parsing and structuring unformatted text. By integrating with Regexapp, TextFSM Generator can more efficiently produce templates that capture the desired data fields, making text parsing faster, cleaner, and more reliable.  
 
 ---
 

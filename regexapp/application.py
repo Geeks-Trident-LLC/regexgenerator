@@ -199,12 +199,9 @@ class Application:
     line_radio_btn (tk.RadioButton): a selection for enabling LinePattern.
     multiline_radio_btn (tk.RadioButton): a selection for enabling MultilinePattern.
 
-    Properties
-    ----------
-    is_pattern_builder_app -> bool
-
     Methods
     -------
+    is_pattern_builder_app() -> bool
     shift_to_pattern_builder_app() -> None
     shift_to_regex_builder_app() -> None
     get_builder_args() -> dict
@@ -623,6 +620,12 @@ class Application:
             frame, text=Data.pyyaml_text,
             link=Data.pyyaml_link
         ).grid(row=3, column=0, padx=(20, 0), pady=(0, 10), sticky=tk.W)
+
+        # genericlib package
+        self.create_custom_label(
+            frame, text=Data.gtgenlib_text,
+            link=Data.gtgenlib_link
+        ).grid(row=3, column=1, padx=(20, 0), pady=(0, 10), sticky=tk.W)
 
         # license textbox
         lframe = self.LabelFrame(
