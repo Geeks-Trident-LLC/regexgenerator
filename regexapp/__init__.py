@@ -20,8 +20,6 @@ from regexapp.core import DynamicTestScriptBuilder
 from regexapp.core import add_reference
 from regexapp.core import remove_reference
 
-from regexapp.core import NonCommercialUseCls
-
 from regexapp.config import version
 from regexapp.config import edition
 __version__ = version
@@ -36,7 +34,6 @@ __all__ = [
     'PatternReference',
     'RegexBuilder',
     'DynamicTestScriptBuilder',
-    'NonCommercialUseCls',
     'add_reference',
     'remove_reference',
     'version',
