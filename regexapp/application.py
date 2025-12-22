@@ -1269,14 +1269,11 @@ class Application:
             else:
                 self.shift_to_regex_builder_app()
 
-        # def callback_rf_btn():
-        #     create_msgbox(
-        #         title='Robotframework feature',
-        #         info="Robotframework button is available in Pro or Enterprise Edition."
-        #     )
-
-        # TODO: Regex Pro Edition and Enterprise Edition will be deprecated
-        #  and removed in the upcoming migration to regexapp version 1.x.
+        def callback_rf_btn():
+            create_msgbox(
+                title='Robotframework feature',
+                info="The Robotframework button will be available starting with the 1.x release."
+            )
 
         # radio buttons
         self.line_radio_btn = self.RadioButton(

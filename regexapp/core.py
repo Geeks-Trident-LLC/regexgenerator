@@ -125,9 +125,6 @@ class RegexBuilder:
     kwargs (dict): an optional keyword arguments.
             Community edition will use the following keywords:
                 prepended_ws, appended_ws, ignore_case
-            Pro or Enterprise edition will be deprecated and removed in
-                the upcoming migration to regexapp version 1.x.
-                prepended_ws, appended_ws, ignore_case, other keywords
 
     patterns (list): a list of patterns.
     test_report (str): a test report.
@@ -484,7 +481,6 @@ class DynamicTestScriptBuilder:
     kwargs : dict
         Optional keyword arguments. Community edition supports:
         `prepended_ws`, `appended_ws`, `ignore_case`.
-        Pro/Enterprise keywords are deprecated in regexapp v1.x.
     lst_of_tests : list
         Compiled list of test cases, each containing test name,
         test data, prepared data, and pattern.
@@ -689,8 +685,8 @@ class DynamicTestScriptBuilder:
             Always raised until Robot Framework test generation is
             implemented.
         """
-        msg = 'TODO: need to implement generated_rf_test for robotframework'
-        NotImplementedError(msg)
+        msg = "Robotframework test script generation is not implemented yet."
+        raise NotImplementedError(msg)
 
     def create_python_test(self):
         """dynamically generate Python test script
