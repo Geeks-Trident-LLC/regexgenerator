@@ -61,6 +61,8 @@ from regexapp.config import Data
 
 import regexapp.ui as ui
 
+from genericlib import DotObject
+
 import yaml
 import re
 import platform
@@ -224,60 +226,6 @@ def set_modal_dialog(dialog):
     dialog.wait_window()
 
 
-class Snapshot(dict):
-    """
-    A dictionary subclass for storing and accessing snapshot data.
-
-    The `Snapshot` class extends the built-in `dict` to allow dictionary
-    keys that match valid Python attribute names (lowercase letter followed
-    by alphanumeric characters) to be accessible as object attributes.
-    This provides both dictionary-style and attribute-style access to
-    stored values.
-
-    Notes
-    -----
-    - Only keys matching the regex pattern ``[a-z]\w*$`` are promoted to
-      attributes. Keys that do not match remain accessible via dictionary
-      lookup but are not set as attributes.
-    - The `update` method ensures that newly added or modified keys are
-      also reflected as attributes when they match the naming rule.
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for attr, val in self.items():
-            if re.match(r'[a-z]\w*$', attr):
-                setattr(self, attr, val)
-
-    def update(self, *args, **kwargs):
-        """
-        Update the snapshot with new key-value pairs and synchronize attributes.
-
-        Extends the built-in `dict.update` method by ensuring that any keys
-        matching valid Python attribute names (regex pattern ``[a-z]\w*$``)
-        are also set as attributes on the `Snapshot` instance. This allows
-        both dictionary-style and attribute-style access to updated values.
-
-        Parameters
-        ----------
-        *args : tuple
-            Positional arguments passed to `dict.update`.
-        **kwargs : Keyword arguments
-            Keyword arguments representing key-value pairs to update.
-
-        Notes
-        -----
-        - Keys that do not match the regex pattern remain accessible only
-          via dictionary lookup.
-        - Attribute synchronization occurs after the dictionary update,
-          ensuring consistency between dict items and object attributes.
-        """
-        super().update(*args, **kwargs)
-        for attr, val in self.items():
-            if re.match(r'[a-z]\w*$', attr):
-                setattr(self, attr, val)
-
-
 class Application:
     """
     Main GUI class for the `regexapp` library.
@@ -311,7 +259,7 @@ class Application:
     copy_text_btn : ttk.Button
         Button for copying text to the clipboard.
 
-    snapshot : Snapshot
+    snapshot : DictObject
         Stores application state for switching contexts.
 
     radio_line_or_multiline_btn_var : tk.StringVar
@@ -455,9 +403,7 @@ class Application:
         self.word_bound_frame = None
 
         # datastore
-        self.snapshot = Snapshot()
-        self.snapshot.update(test_data=None)
-        self.snapshot.update(test_result='')
+        self.snapshot = DotObject(test_data=None, test_result='')
 
         # variables
         # variables: radio button
@@ -2293,14 +2239,14 @@ class Application:
 
         # Completion of the callback_test_data_btn inner function logic.
 
-        # Start of logic for the callback_builder_chkbox inner function.
-        def callback_builder_chkbox():
+        # Start of logic for the callback_builder_checkbox inner function.
+        def callback_builder_checkbox():
             if self.is_pattern_builder_app:
                 self.shift_to_pattern_builder_app()
             else:
                 self.shift_to_regex_builder_app()
 
-        # Completion of the callback_builder_chkbox inner function logic.
+        # Completion of the callback_builder_checkbox inner function logic.
 
         # Start of logic for the callback_rf_btn inner function.
         # def callback_rf_btn():
@@ -2403,7 +2349,7 @@ class Application:
         builder_checkbox = ui.create(
             self.CheckBox, parent=self.entry_frame, text='Builder',
             variable=self.builder_checkbox_var, onvalue=True, offvalue=False,
-            command=callback_builder_chkbox
+            command=callback_builder_checkbox
         )
         ui.grid(builder_checkbox, row=0, column=12)
 
