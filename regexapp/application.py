@@ -1,12 +1,38 @@
-"""Module containing the logic for the Regex application."""
+"""
+regexapp.application
+====================
+
+Main application module for the `regexapp` library.
+
+This module implements the core logic and graphical user interface (GUI)
+components for `regexapp`. It leverages the `tkinter` framework to provide
+an interactive environment for building, customizing, and testing regular
+expression patterns. Users can launch the GUI to access regex generation
+tools, reference management, and dynamic test script creation.
+
+Features
+--------
+- Integrates with `tkinter` to deliver a graphical interface.
+- Provides the primary entry point for launching the regexapp GUI.
+- Supports pattern generation, customization, and testing workflows.
+
+Notes
+-----
+- If `tkinter` is not available, the module prints a descriptive error
+  message and terminates execution gracefully.
+- This module is intended to be executed as the main entry point for
+  GUI
+"""
 
 try:
     import tkinter as tk
 except ModuleNotFoundError:
     import sys
     from platform import python_version as py_version
+
     items = ["Failed to launch RegexBuilder application because",
-             "Python{} binary doesn't have tkinter module.".format(py_version()),
+             "Python{} binary doesn't have tkinter module.".format(
+                 py_version()),
              "Please install tkinter module and try it again."]
     max_len = max(len(item) for item in items)
     txt = '\n'.join('| {} |'.format(item.ljust(max_len)) for item in items)
@@ -37,23 +63,39 @@ import yaml
 import re
 import platform
 
-
 __version__ = version
 __edition__ = edition
 
 
 def get_relative_center_location(parent, width, height):
-    """get relative a center location of parent window.
+    """
+    Calculate the coordinates to center a child window relative to its parent.
+
+    This function determines the (x, y) position for placing a child
+    window so that it is centered within the bounds of the given
+    parent window.
 
     Parameters
     ----------
-    parent (tkinter): tkinter widget instance.
-    width (int): a width of a child window.
-    height (int): a height of a child window.
+    parent : tkinter.Tk or tkinter.Toplevel
+        The parent window instance whose geometry is used as reference.
+    width : int
+        The width of the child window.
+    height : int
+        The height of the child window.
 
     Returns
     -------
-    tuple: x, y location.
+    tuple of int
+        A tuple ``(x, y)`` representing the top-left coordinates at
+        which the child window should be placed to appear centered
+        within the parent window.
+
+    Notes
+    -----
+    - The calculation uses the parent's geometry string (width x height + x + y).
+    - Coordinates are returned as integers suitable for use with
+      ``geometry()`` in tkinter.
     """
     pwh, px, py = parent.winfo_geometry().split('+')
     px, py = int(px), int(py)
@@ -67,23 +109,55 @@ def get_relative_center_location(parent, width, height):
 def create_msgbox(title=None, error=None, warning=None, info=None,
                   question=None, okcancel=None, retrycancel=None,
                   yesno=None, yesnocancel=None, **options):
-    """create tkinter.messagebox
+    """
+    Display a tkinter messagebox with the specified type and message.
+
+    This function provides a unified interface for creating different
+    types of message boxes (error, warning, info, question, and various
+    confirmation dialogs). Only one type of message should be specified
+    per call. The function delegates to the appropriate `tkinter.messagebox`
+    function based on the provided keyword argument.
+
     Parameters
     ----------
-    title (str): a title of messagebox.  Default is None.
-    error (str): an error message.  Default is None.
-    warning (str): a warning message. Default is None.
-    info (str): an information message.  Default is None.
-    question (str): a question message.  Default is None.
-    okcancel (str): an ok or cancel message.  Default is None.
-    retrycancel (str): a retry or cancel message.  Default is None.
-    yesno (str): a yes or no message.  Default is None.
-    yesnocancel (str): a yes, no, or cancel message.  Default is None.
-    options (dict): options for messagebox.
+    title : str, optional
+        The title of the messagebox window. Default is None.
+    error : str, optional
+        An error message. Displays an error dialog. Default is None.
+    warning : str, optional
+        A warning message. Displays a warning dialog. Default is None.
+    info : str, optional
+        An informational message. Displays an info dialog. Default is None.
+    question : str, optional
+        A question prompt. Displays a yes/no dialog returning a string. Default is None.
+    okcancel : str, optional
+        A message for an OK/Cancel dialog. Returns a boolean. Default is None.
+    retrycancel : str, optional
+        A message for a Retry/Cancel dialog. Returns a boolean. Default is None.
+    yesno : str, optional
+        A message for a Yes/No dialog. Returns a boolean. Default is None.
+    yesnocancel : str, optional
+        A message for a Yes/No/Cancel dialog. Returns a boolean or None. Default is None.
+    **options : dict
+        Additional keyword arguments passed to the underlying tkinter
+        messagebox function (e.g., `icon`, `default`).
 
     Returns
     -------
-    any: a string or boolean result
+    str or bool or None
+        The result of the messagebox interaction:
+        - "ok" for error, warning, or info dialogs.
+        - "yes"/"no" string for question dialogs.
+        - Boolean for okcancel, retrycancel, yesno dialogs.
+        - Boolean or None for yesnocancel dialogs.
+
+    Notes
+    -----
+    - Only one message type should be provided per call. If multiple
+      are specified, the first matching type in the order of evaluation
+      (error → warning → info → question → okcancel → retrycancel → yesno → yesnocancel)
+      will be used.
+    - If no type is specified, an info dialog is shown by default.
     """
     if error:
         # a return result is an "ok" string
@@ -96,19 +170,23 @@ def create_msgbox(title=None, error=None, warning=None, info=None,
         result = messagebox.showinfo(title=title, message=info, **options)
     elif question:
         # a return result is a "yes" or "no" string
-        result = messagebox.askquestion(title=title, message=question, **options)
+        result = messagebox.askquestion(title=title, message=question,
+                                        **options)
     elif okcancel:
         # a return result is boolean
-        result = messagebox.askokcancel(title=title, message=okcancel, **options)
+        result = messagebox.askokcancel(title=title, message=okcancel,
+                                        **options)
     elif retrycancel:
         # a return result is boolean
-        result = messagebox.askretrycancel(title=title, message=retrycancel, **options)
+        result = messagebox.askretrycancel(title=title, message=retrycancel,
+                                           **options)
     elif yesno:
         # a return result is boolean
         result = messagebox.askyesno(title=title, message=yesno, **options)
     elif yesnocancel:
         # a return result is boolean or None
-        result = messagebox.askyesnocancel(title=title, message=yesnocancel, **options)
+        result = messagebox.askyesnocancel(title=title, message=yesnocancel,
+                                           **options)
     else:
         # a return result is an "ok" string
         result = messagebox.showinfo(title=title, message=info, **options)
@@ -117,11 +195,26 @@ def create_msgbox(title=None, error=None, warning=None, info=None,
 
 
 def set_modal_dialog(dialog):
-    """set dialog to become a modal dialog
+    """
+    Configure a tkinter dialog window to behave as a modal dialog.
+
+    A modal dialog prevents interaction with other windows in the
+    application until the dialog is closed. This function sets the
+    dialog as transient to its parent, ensures it is visible, and
+    grabs focus so that user input is restricted to the dialog.
 
     Parameters
     ----------
-    dialog (tkinter.TK): a dialog or window application.
+    dialog : tkinter.Toplevel or tkinter.Tk
+        The dialog or window instance to configure as modal.
+
+    Notes
+    -----
+    - `transient()` ties the dialog to its parent window.
+    - `wait_visibility()` ensures the dialog is displayed before
+      grabbing focus.
+    - `grab_set()` restricts user input to the dialog only.
+    - `wait_window()` blocks execution until the dialog is closed.
     """
     dialog.transient(dialog.master)
     dialog.wait_visibility()
@@ -130,7 +223,24 @@ def set_modal_dialog(dialog):
 
 
 class Snapshot(dict):
-    """Snapshot for storing data."""
+    """
+    A dictionary subclass for storing and accessing snapshot data.
+
+    The `Snapshot` class extends the built-in `dict` to allow dictionary
+    keys that match valid Python attribute names (lowercase letter followed
+    by alphanumeric characters) to be accessible as object attributes.
+    This provides both dictionary-style and attribute-style access to
+    stored values.
+
+    Notes
+    -----
+    - Only keys matching the regex pattern ``[a-z]\w*$`` are promoted to
+      attributes. Keys that do not match remain accessible via dictionary
+      lookup but are not set as attributes.
+    - The `update` method ensures that newly added or modified keys are
+      also reflected as attributes when they match the naming rule.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for attr, val in self.items():
@@ -138,6 +248,28 @@ class Snapshot(dict):
                 setattr(self, attr, val)
 
     def update(self, *args, **kwargs):
+        """
+        Update the snapshot with new key-value pairs and synchronize attributes.
+
+        Extends the built-in `dict.update` method by ensuring that any keys
+        matching valid Python attribute names (regex pattern ``[a-z]\w*$``)
+        are also set as attributes on the `Snapshot` instance. This allows
+        both dictionary-style and attribute-style access to updated values.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments passed to `dict.update`.
+        **kwargs : dict
+            Keyword arguments representing key-value pairs to update.
+
+        Notes
+        -----
+        - Keys that do not match the regex pattern remain accessible only
+          via dictionary lookup.
+        - Attribute synchronization occurs after the dictionary update,
+          ensuring consistency between dict items and object attributes.
+        """
         super().update(*args, **kwargs)
         for attr, val in self.items():
             if re.match(r'[a-z]\w*$', attr):
@@ -145,84 +277,133 @@ class Snapshot(dict):
 
 
 class Application:
-    """A regex GUI class.
+    """
+    Main GUI class for the `regexapp` library.
+
+    The `Application` class provides a graphical interface for building,
+    customizing, and testing regular expressions. It integrates with
+    `tkinter` and `ttk` to deliver a structured layout with frames,
+    buttons, text areas, and interactive widgets. Users can manage
+    regex patterns, generate test scripts, and view results directly
+    within the GUI.
 
     Attributes
     ----------
-    root (tkinter.Tk): a top tkinter app.
+    root : tkinter.Tk
+        The root tkinter application window.
+    panedwindow : ttk.Panedwindow
+        Main layout container for organizing frames.
+    text_frame : ttk.Frame
+        Frame containing the test data widget.
+    entry_frame : ttk.Frame
+        Frame containing action buttons (open, paste, build, snippet,
+        unittest, pytest, etc.).
+    result_frame : ttk.Frame
+        Frame containing the test result widget.
+    var_name_frame : ttk.Frame
+        Frame containing the variable name textbox.
+    word_bound_frame : ttk.Frame
+        Frame containing the word boundary combobox.
+    save_as_btn : ttk.Button
+        Button for saving output to a file.
+    copy_text_btn : ttk.Button
+        Button for copying text to the clipboard.
 
-    panedwindow (ttk.Panedwindow): a panedwindow for main layout.
-    text_frame (ttk.Frame): a frame to contain test data widget.
-    entry_frame (ttk.Frame): a frame to contain any action button such as
-            open, paste, build, snippet, unittest, pytest, ...
-    result_frame (ttk.Frame): a frame to contain test result widget.
-    var_name_frame (ttk.Frame): a frame to contain var_name textbox
-    word_bound_frame (ttk.Frame): a frame to contain word_bound combobox
-    save_as_btn (ttk.Button): a Save As button.
-    copy_text_btn (ttk.Button): a Copy Text button.
+    test_data : str
+        Current test data string.
+    snapshot : dict
+        Stores application state for switching contexts.
 
-    test_data (str): a test data
-    snapshot (dict): store data of switching app.
+    radio_line_or_multiline_btn_var : tk.StringVar
+        Radio button variable; defaults to "multiline".
+    builder_chkbox_var : tk.BooleanVar
+        Checkbox variable for enabling the builder.
+    var_name_var : tk.StringVar
+        Variable bound to the var_name textbox.
+    word_bound_var : tk.StringVar
+        Variable bound to the word_bound combobox.
+    is_confirmed : bool
+        Flag to show confirmation dialogs. Defaults to True.
 
-    radio_line_or_multiline_btn_var (tk.StringVar): a variable for radio button
-            Default is multiline.
+    prepended_ws_var : tk.BooleanVar
+        Checkbox variable for prepended whitespace. Defaults to False.
+    appended_ws_var : tk.BooleanVar
+        Checkbox variable for appended whitespace. Defaults to False.
+    ignore_case_var : tk.BooleanVar
+        Checkbox variable for case-insensitive matching. Defaults to False.
+    test_name_var : tk.StringVar
+        Variable bound to the test name textbox. Defaults to empty string.
+    test_cls_name_var : tk.StringVar
+        Variable bound to the test class name textbox.
+        Defaults to "TestDynamicGenTestScript".
+    max_words_var : tk.IntVar
+        Variable bound to the max words textbox. Defaults to 6.
+    filename_var : tk.StringVar
+        Variable bound to the filename textbox. Defaults to empty string.
+    author_var : tk.StringVar
+        Variable bound to the author textbox. Defaults to empty string.
+    email_var : tk.StringVar
+        Variable bound to the email textbox. Defaults to empty string.
+    company_var : tk.StringVar
+        Variable bound to the company textbox. Defaults to empty string.
+    new_pattern_name_var : tk.StringVar
+        Variable for creating new pattern references. Defaults to empty string.
 
-    builder_chkbox_var (tk.BooleanVar): a variable for builder checkbox.
-    var_name_var (tk.StringVar): a variable for var_name textbox.
-    word_bound_var (tk.StringVar): a variable for word_bound combobox.
-    is_confirmed (bool): True to show confirmation.  Default is True.
-
-    prepended_ws_var (tk.BooleanVar): a variable for prepended_ws checkbox.
-            Default is False
-    appended_ws_var (tk.BooleanVar): a variable for appended_ws checkbox.
-            Default is False.
-    ignore_case_var (tk.BooleanVar): a variable for ignore_case checkbox.
-            Default is False
-    test_name_var (tk.StringVar): a variable for test_name textbox.
-            Default is empty string.
-    test_cls_name_var (tk.StringVar): a variable for test_cls_name_var.
-            Default is TestDynamicGenTestScript.
-    max_words_var (tk.IntVar): a variable for max_words textbox.
-            Default is 6.
-    filename_var (tk.StringVar): a variable for filename textbox.
-            Default is empty string.
-    author_var (tk.StringVar): a variable for author textbox.
-            Default is empty string.
-    email_var (tk.StringVar): a variable for email textbox.  Default is empty string.
-    company_var (tk.StringVar): a variable for company textbox.  Default is empty string.
-
-    new_pattern_name_var (tk.StringVar): a variable for creating new pattern
-            reference.  Default is empty string.
-
-    input textarea (tk.Text): a TextArea widget for test data.
-    result_textarea (tk.Text): a TextArea widget for test result.
-    line_radio_btn (tk.RadioButton): a selection for enabling LinePattern.
-    multiline_radio_btn (tk.RadioButton): a selection for enabling MultilinePattern.
+    input_textarea : tk.Text
+        TextArea widget for entering test data.
+    result_textarea : tk.Text
+        TextArea widget for displaying test results.
+    line_radio_btn : tk.Radiobutton
+        Radio button for enabling `LinePattern`.
+    multiline_radio_btn : tk.Radiobutton
+        Radio button for enabling `MultilinePattern`.
 
     Methods
     -------
     is_pattern_builder_app() -> bool
+        Check if the application is in pattern builder mode.
     shift_to_pattern_builder_app() -> None
+        Switch the interface to pattern builder mode.
     shift_to_regex_builder_app() -> None
+        Switch the interface to regex builder mode.
     get_builder_args() -> dict
+        Retrieve arguments for regex builder configuration.
     get_pattern_builder_args() -> dict
+        Retrieve arguments for pattern builder configuration.
     set_default_setting() -> None
-    Application.get_textarea(node) -> str
+        Reset application settings to defaults.
+    get_textarea(node) -> str
+        Get text content from a specified textarea widget.
     set_textarea(node, data, title='') -> None
+        Set text content in a specified textarea widget.
     set_title(widget=None, title='') -> None
+        Update the window or widget title.
     callback_file_open() -> None
+        Handle file open action.
     callback_help_documentation() -> None
+        Display help documentation.
     callback_help_view_licenses() -> None
+        Display license information.
     callback_help_about() -> None
+        Display application "About" dialog.
     callback_preferences_settings() -> None
+        Open preferences/settings dialog.
     callback_preferences_system_reference() -> None
+        Open system reference configuration.
     callback_preferences_user_reference() -> None
+        Open user reference configuration.
     build_menu() -> None
+        Construct the application menu bar.
     build_frame() -> None
+        Build the main application frames.
     build_textarea() -> None
+        Initialize text area widgets.
     build_entry() -> None
+        Initialize entry widgets and action buttons.
     build_result() -> None
+        Initialize result display widgets.
     run() -> None
+        Start the main application loop.
     """
 
     browser = webbrowser
@@ -275,8 +456,8 @@ class Application:
 
         # datastore
         self.snapshot = Snapshot()
-        self.snapshot.update(test_data=None)
-        self.snapshot.update(test_result='')
+        self.snapshot.update(test_data=None)  # noqa
+        self.snapshot.update(test_result='')  # noqa
 
         # variables
         # variables: radio button
@@ -322,9 +503,57 @@ class Application:
 
     @property
     def is_pattern_builder_app(self):
+        """
+        Check whether the application is in pattern builder mode.
+
+        This property evaluates the state of the builder checkbox variable
+        (`builder_chkbox_var`). If the checkbox is selected, the application
+        is considered to be running in pattern builder mode.
+
+        Returns
+        -------
+        bool
+            True if the builder checkbox is enabled (pattern builder mode),
+            False otherwise.
+        """
         return self.builder_chkbox_var.get() is True
 
     def shift_to_pattern_builder_app(self):
+        """
+        Switch the application interface from Regex Builder mode to Pattern Builder mode.
+
+        This method handles the transition between the Regex Builder App and the
+        Pattern Builder App. If confirmation is enabled (`is_confirmed`), a dialog
+        box is displayed to prompt the user with options ("Yes", "No", "Cancel").
+        Depending on the user's choice, the application state is updated and the
+        interface is reconfigured accordingly.
+
+        Workflow
+        --------
+        1. Prompt the user with a confirmation dialog if `is_confirmed` is True.
+           - "Yes": Switch to Pattern Builder App and continue showing confirmation.
+           - "No": Switch to Pattern Builder App without showing confirmation again.
+           - "Cancel": Abort the switch.
+        2. Save current Regex Builder data and results into the `snapshot`.
+        3. Restore any previously saved Pattern Builder data and results.
+        4. Update the GUI layout:
+           - Remove Regex Builder-specific widgets (radio buttons, snippet/unittest/pytest buttons).
+           - Display Pattern Builder-specific frames (variable name and word boundary).
+
+        Notes
+        -----
+        - The `snapshot` dictionary is used to persist and restore application state
+          between builder modes.
+        - Confirmation behavior is controlled by the `is_confirmed` flag and updated
+          based on user input.
+        - This method modifies the GUI layout dynamically using `grid_remove` and `grid`.
+
+        Returns
+        -------
+        None
+            This method performs side effects (state updates and GUI changes) but
+            does not return a value.
+        """
 
         if self.is_confirmed:
             title = 'Switching To Pattern Builder App'
@@ -348,8 +577,8 @@ class Application:
             data = self.get_textarea(self.input_textarea)
             result = self.get_textarea(self.result_textarea)
             self.snapshot.update(
-                regex_builder_app_data=data,
-                regex_builder_app_result=result
+                regex_builder_app_data=data,  # noqa
+                regex_builder_app_result=result  # noqa
             )
             data = self.snapshot.get('pattern_builder_app_data', '')
             result = self.snapshot.get('pattern_builder_app_result', '')
@@ -367,6 +596,40 @@ class Application:
             self.word_bound_frame.grid(row=0, column=14)
 
     def shift_to_regex_builder_app(self):
+        """
+        Switch the application interface from Pattern Builder mode to Regex Builder mode.
+
+        This method manages the transition back to the Regex Builder App. If confirmation
+        is enabled (`is_confirmed`), a dialog box prompts the user with options ("Yes",
+        "No", "Cancel"). Based on the user's choice, the application state is updated
+        and the GUI layout is reconfigured to display Regex Builder-specific widgets.
+
+        Workflow
+        --------
+        1. Prompt the user with a confirmation dialog if `is_confirmed` is True.
+           - "Yes": Switch to Regex Builder App and continue showing confirmation.
+           - "No": Switch to Regex Builder App without showing confirmation again.
+           - "Cancel": Abort the switch.
+        2. Save current Pattern Builder data and results into the `snapshot`.
+        3. Restore any previously saved Regex Builder data and results.
+        4. Update the GUI layout:
+           - Display Regex Builder-specific widgets (radio buttons, snippet/unittest/pytest buttons).
+           - Remove Pattern Builder-specific frames (variable name and word boundary).
+
+        Notes
+        -----
+        - The `snapshot` dictionary is used to persist and restore application state
+          between builder modes.
+        - Confirmation behavior is controlled by the `is_confirmed` flag and updated
+          based on user input.
+        - This method modifies the GUI layout dynamically using `grid` and `grid_remove`.
+
+        Returns
+        -------
+        None
+            This method performs side effects (state updates and GUI changes) but
+            does not return a value.
+        """
         if self.is_confirmed:
             title = 'Switching To Regex Builder App'
             yesnocancel = """
@@ -389,8 +652,8 @@ class Application:
             data = self.get_textarea(self.input_textarea)
             result = self.get_textarea(self.result_textarea)
             self.snapshot.update(
-                pattern_builder_app_data=data,
-                pattern_builder_app_result=result
+                pattern_builder_app_data=data,  # noqa
+                pattern_builder_app_result=result  # noqa
             )
             data = self.snapshot.get('regex_builder_app_data', '')
             result = self.snapshot.get('regex_builder_app_result', '')
@@ -408,7 +671,31 @@ class Application:
             self.word_bound_frame.grid_remove()
 
     def get_regexbuilder_args(self):
-        """return arguments of RegexBuilder class"""
+        """
+        Collect and return configuration arguments for initializing a `RegexBuilder` instance.
+
+        This method gathers values from the application's GUI variables and
+        returns them as a dictionary. The resulting dictionary can be passed
+        directly to the `RegexBuilder` class to configure regex generation
+        and test script creation.
+
+        Returns
+        -------
+        dict
+            A dictionary of configuration arguments with the following keys:
+
+            - ignore_case (bool): Whether to enable case-insensitive matching.
+            - prepended_ws (bool): Whether to prepend a whitespace to the pattern.
+            - appended_ws (bool): Whether to append a whitespace to the pattern.
+            - is_line (bool): True if line-based matching is selected, False for multiline.
+            - test_name (str): Name of the test case. Defaults to empty string.
+            - test_cls_name (str): Name of the test class. Defaults to "TestDynamicGenTestScript".
+            - max_words (int): Maximum number of words for generating test names. Defaults to 6.
+            - filename (str): Output filename for saving generated test scripts.
+            - author (str): Author name. Defaults to empty string.
+            - email (str): Author email. Defaults to empty string.
+            - company (str): Company name. Defaults to empty string.
+        """
         result = dict(
             ignore_case=self.ignore_case_var.get(),
             prepended_ws=self.prepended_ws_var.get(),
@@ -425,7 +712,27 @@ class Application:
         return result
 
     def get_pattern_builder_args(self):
-        """return arguments of PatternBuilder class"""
+        """
+        Collect and return configuration arguments for initializing a `PatternBuilder` instance.
+
+        This method gathers values from the application's GUI variables and
+        returns them as a dictionary. The resulting dictionary can be passed
+        directly to the `PatternBuilder` class to configure pattern generation
+        and testing.
+
+        Returns
+        -------
+        dict
+            A dictionary of configuration arguments with the following keys:
+
+            - var_name (str): The variable name associated with the pattern.
+            - word_bound (str): Word boundary option derived from the selected
+              combobox value. Possible values include:
+                * '' (none): No word boundary applied.
+                * 'word_bound': Apply word boundary on both sides.
+                * 'word_bound_left': Apply word boundary on the left side only.
+                * 'word_bound_right': Apply word boundary on the right side only.
+        """
         table = dict(none='', both='word_bound',
                      left='word_bound_left', right='word_bound_right')
         result = dict(
@@ -435,7 +742,32 @@ class Application:
         return result
 
     def set_default_setting(self):
-        """reset to default setting"""
+        """
+        Reset application configuration variables to their default values.
+
+        This method restores the state of all regex-related configuration
+        variables to their initial defaults. It ensures a consistent baseline
+        when starting a new session or clearing previous settings.
+
+        Notes
+        -----
+        - Whitespace options (`prepended_ws_var`, `appended_ws_var`) are reset to False.
+        - Case sensitivity (`ignore_case_var`) is reset to False.
+        - Test metadata is reset:
+            * `test_name_var`: empty string
+            * `test_cls_name_var`: "TestDynamicGenTestScript"
+            * `max_words_var`: 6
+            * `filename_var`: empty string
+            * `author_var`: empty string
+            * `email_var`: empty string
+            * `company_var`: empty string
+
+        Returns
+        -------
+        None
+            This method performs side effects (variable resets) but does not return a value.
+        """
+
         self.prepended_ws_var.set(False)
         self.appended_ws_var.set(False)
         self.ignore_case_var.set(False)
@@ -449,13 +781,31 @@ class Application:
 
     @classmethod
     def get_textarea(cls, node):
-        """Get data from TextArea widget
+        """
+        Retrieve and normalize text content from a `tk.Text` widget.
+
+        This method extracts the full text from a `tk.Text` widget starting
+        at position `'1.0'` through `'end'`. It trims trailing newline or
+        carriage return characters to ensure the returned string is clean
+        and consistent across platforms.
+
         Parameters
         ----------
-        node (tk.Text): a tk.Text widget
+        node : tk.Text
+            A tkinter `Text` widget from which to retrieve content.
+
         Returns
         -------
-        str: a text from TextArea widget
+        str
+            The normalized text string from the widget, with trailing
+            newline (`\\n`), carriage return (`\\r`), or Windows-style
+            line ending (`\\r\\n`) removed if present.
+
+        Notes
+        -----
+        - This method ensures cross-platform consistency by stripping
+          trailing line endings that tkinter may append automatically.
+        - The returned string preserves all other content exactly as entered.
         """
         text = node.get('1.0', 'end')
         last_char = text[-1]
@@ -468,12 +818,33 @@ class Application:
             return text
 
     def set_textarea(self, node, data, title=''):
-        """set data for TextArea widget
+        """
+        Set text content in a `tk.Text` widget and optionally update the window title.
+
+        This method replaces the existing content of a `tk.Text` widget with
+        the provided data. If a non-empty title is supplied, it also updates
+        the application window title.
+
         Parameters
         ----------
-        node (tk.Text): a tk.Text widget
-        data (any): a data
-        title (str): a title of window
+        node : tk.Text
+            A tkinter `Text` widget where the content will be inserted.
+        data : any
+            The data to insert into the widget. Converted to a string before insertion.
+        title : str, optional
+            The title to set for the application window. Defaults to an empty string.
+            If empty, the window title is not modified.
+
+        Returns
+        -------
+        None
+            This method performs side effects (widget updates and optional title change)
+            but does not return a value.
+
+        Notes
+        -----
+        - Existing content in the `Text` widget is cleared before inserting new data.
+        - Both `data` and `title` are coerced to strings to ensure consistent behavior.
         """
         data, title = str(data), str(title).strip()
 
@@ -482,53 +853,193 @@ class Application:
         node.insert(tk.INSERT, data)
 
     def set_title(self, widget=None, title=''):
-        """Set a new title for tkinter widget.
+        """
+        Update the title of a tkinter widget window.
+
+        This method sets a new title for the specified tkinter widget. If no
+        widget is provided, the root application window (`self.root`) is used.
+        The title is combined with the application's base title (`_base_title`)
+        to ensure consistent branding across all windows.
 
         Parameters
         ----------
-        widget (tkinter): a tkinter widget.
-        title (str): a title.  Default is empty.
+        widget : tkinter.Tk or tkinter.Toplevel, optional
+            The tkinter widget whose title should be updated. Defaults to the
+            root window if not provided.
+        title : str, optional
+            The custom title to prepend. Defaults to an empty string. If empty,
+            only the base title is used.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (updating the widget title) but
+            does not return a value.
+
+        Notes
+        -----
+        - If a non-empty `title` is provided, the final window title is formatted
+          as: "<title> - <base_title>".
+        - If `title` is empty, only `<base_title>` is applied.
         """
         widget = widget or self.root
-        btitle = self._base_title
-        title = '{} - {}'.format(title, btitle) if title else btitle
+        base_title = self._base_title
+        title = f'{title} - {base_title}' if title else base_title
         widget.title(title)
 
     def create_custom_label(self, parent, text='', link='',
                             increased_size=0, bold=False, underline=False,
                             italic=False):
-        """create custom label
+        """
+        Create a customized tkinter `Label` widget.
+
+        This method generates a `Label` widget with configurable text, font
+        styling, and optional hyperlink behavior. It allows dynamic control
+        over font size, weight, underline, and italic styles, making it useful
+        for building visually distinct labels in the GUI.
 
         Parameters
         ----------
-        parent (tkinter): a parent of widget.
-        text (str): a text of widget.
-        link (str): a label hyperlink.
-        increased_size (int): increased size for font.
-        bold (bool): True will set bold font.
-        underline (bool): True will set to underline font.
-        italic (bool): True will set to italic font.
+        parent : tkinter.Widget
+            The parent widget that will contain the label.
+        text : str, optional
+            The text to display in the label. Defaults to an empty string.
+        link : str, optional
+            A hyperlink associated with the label. Defaults to an empty string.
+            If provided, the label may be styled or bound to open the link.
+        increased_size : int, optional
+            Amount to increase the base font size. Defaults to 0 (no change).
+        bold : bool, optional
+            If True, the label text is rendered in bold. Defaults to False.
+        underline : bool, optional
+            If True, the label text is underlined. Defaults to False.
+        italic : bool, optional
+            If True, the label text is italicized. Defaults to False.
 
         Returns
         -------
-        tkinter.Label: a label widget.
+        tkinter.Label
+            A fully configured `Label` widget ready to be packed or gridded
+            into the parent container.
+
+        Notes
+        -----
+        - Font styling is applied by combining the provided options (`bold`,
+          `underline`, `italic`, `increased_size`).
+        - If `link` is provided, additional event bindings may be required
+          to enable hyperlink functionality.
         """
 
+        # Start of logic for the mouse_over inner function.
         def mouse_over(event):
+            """
+            Handle mouse-over event for a custom label.
+
+            This inner function is bound to the `<Enter>` event of a label created
+            by `Application.create_custom_label`. It defines the behavior when the
+            mouse pointer hovers over the label, typically used to provide visual
+            feedback (e.g., changing cursor style, highlighting text, or preparing
+            hyperlink interaction).
+
+            Parameters
+            ----------
+            event : tkinter.Event
+                The event object containing metadata about the mouse-over action,
+                including the widget reference and pointer coordinates.
+
+            Returns
+            -------
+            None
+                This function performs side effects (UI updates or event handling)
+                but does not return a value.
+
+            Notes
+            -----
+            - Common use cases include changing the label appearance or cursor
+              when a hyperlink (`link`) is associated with the label.
+            - As an inner function, it has access to the enclosing scope of
+              `create_custom_label`, allowing it to reference label-specific
+              attributes or configuration.
+            """
             if 'underline' not in event.widget.font:
                 event.widget.configure(
                     font=event.widget.font + ['underline'],
                     cursor='hand2'
                 )
 
+        # Completion of the mouse_over inner function logic.
+
+        # Start of logic for the mouse_out inner function.
         def mouse_out(event):
+            """
+            Handle mouse-leave event for a custom label.
+
+            This inner function is bound to the `<Leave>` event of a label created
+            by `Application.create_custom_label`. It defines the behavior when the
+            mouse pointer exits the label area, typically used to revert any visual
+            feedback applied during the mouse-over event (e.g., restoring cursor
+            style, removing highlight, or resetting hyperlink appearance).
+
+            Parameters
+            ----------
+            event : tkinter.Event
+                The event object containing metadata about the mouse-leave action,
+                including the widget reference and pointer coordinates.
+
+            Returns
+            -------
+            None
+                This function performs side effects (UI updates or event handling)
+                but does not return a value.
+
+            Notes
+            -----
+            - Common use cases include restoring the label’s default appearance
+              after hover effects are applied in `mouse_over`.
+            - As an inner function, it has access to the enclosing scope of
+              `create_custom_label`, allowing it to reference label-specific
+              attributes or configuration.
+            """
             event.widget.config(
                 font=event.widget.font,
                 cursor='arrow'
             )
 
+        # Completion of the mouse_out inner function logic.
+
+        # Start of logic for the mouse_press inner function.
         def mouse_press(event):
+            """
+            Handle mouse-click event for a custom label.
+
+            This inner function is bound to the `<Button-1>` event of a label created
+            by `Application.create_custom_label`. It defines the behavior when the
+            label is clicked, typically used to trigger hyperlink navigation or
+            execute a custom action associated with the label.
+
+            Parameters
+            ----------
+            event : tkinter.Event
+                The event object containing metadata about the mouse-click action,
+                including the widget reference and pointer coordinates.
+
+            Returns
+            -------
+            None
+                This function performs side effects (e.g., opening a link or updating
+                the UI) but does not return a value.
+
+            Notes
+            -----
+            - If the label was created with a `link` argument, this handler may
+              open the associated URL in a web browser.
+            - As an inner function, it has access to the enclosing scope of
+              `create_custom_label`, allowing it to reference label-specific
+              attributes or configuration.
+            """
             self.browser.open_new_tab(event.widget.link)
+
+        # Completion of the mouse_press inner function logic.
 
         style = ttk.Style()
         style.configure("Blue.TLabel", foreground="blue")
@@ -550,32 +1061,139 @@ class Application:
         return label
 
     def callback_file_open(self):
-        """Callback for Menu File > Open."""
+        """
+        Handle the "File > Open" menu action.
+
+        This callback opens a file selection dialog, reads the chosen file,
+        and loads its content into the application. If the application is in
+        Regex Builder mode, the loaded content is stored as test data and the
+        result area is cleared. The input text area is updated with the file
+        content, and the window title is set to the filename.
+
+        Workflow
+        --------
+        1. Display a file dialog restricted to text files (`.txt`) or all files.
+        2. If a file is selected:
+           - Read its content using UTF-8 encoding.
+           - In Regex Builder mode:
+             * Enable the "Test Data" button.
+             * Reset the result textarea.
+             * Save the content into the snapshot under `test_data`.
+           - Update the input textarea with the file content.
+           - Update the window title to the filename.
+
+        Returns
+        -------
+        None
+            This method performs side effects (file I/O, widget updates, and
+            snapshot state changes) but does not return a value.
+
+        Notes
+        -----
+        - The file dialog uses `tkinter.filedialog.askopenfilename`.
+        - Only `.txt` files are explicitly listed, but all files can be opened.
+        - Content is always read with UTF-8 encoding for consistency.
+        """
+
         filetypes = [
             ('Text Files', '.txt', 'TEXT'),
             ('All Files', '*'),
         ]
         filename = filedialog.askopenfilename(filetypes=filetypes)
         if filename:
-            with open(filename) as stream:
+            with open(filename, encoding="utf-8") as stream:
                 content = stream.read()
                 if not self.is_pattern_builder_app:
                     self.test_data_btn.config(state=tk.NORMAL)
                     self.test_data_btn_var.set('Test Data')
                     self.set_textarea(self.result_textarea, '')
-                    self.snapshot.update(test_data=content)
+                    self.snapshot.update(test_data=content)  # noqa
                 self.set_textarea(self.input_textarea, content, title=filename)
 
     def callback_help_documentation(self):
-        """Callback for Menu Help > Getting Started."""
+        """
+        Handle the "Help > Getting Started" menu action.
+
+        This callback opens the application's official documentation in a new
+        browser tab. It provides users with quick access to the "Getting Started"
+        guide or reference materials hosted at the URL defined in
+        `Data.documentation_url`.
+
+        Workflow
+        --------
+        1. Retrieve the documentation URL from `Data.documentation_url`.
+        2. Open the URL in a new browser tab using the application's
+           `self.browser` instance.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (launching documentation in a
+            browser) but does not return a value.
+
+        Notes
+        -----
+        - Relies on `self.browser.open_new_tab` for launching the documentation.
+        - The documentation URL is centralized in the `Data` class for
+          maintainability.
+        """
         self.browser.open_new_tab(Data.documentation_url)
 
     def callback_help_view_licenses(self):
-        """Callback for Menu Help > View Licenses."""
+        """
+        Handle the "Help > View Licenses" menu action.
+
+        This callback opens the application's license information in a new
+        browser tab. It provides users with direct access to the license text
+        and related legal details hosted at the URL defined in
+        `Data.license_url`.
+
+        Workflow
+        --------
+        1. Retrieve the license URL from `Data.license_url`.
+        2. Open the URL in a new browser tab using the application's
+           `self.browser` instance.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (launching the license page in
+            a browser) but does not return a value.
+
+        Notes
+        -----
+        - Relies on `self.browser.open_new_tab` for launching the license page.
+        - The license URL is centralized in the `Data` class for maintainability.
+        """
         self.browser.open_new_tab(Data.license_url)
 
     def callback_help_about(self):
-        """Callback for Menu Help > About"""
+        """
+        Handle the "Help > About" menu action.
+
+        This callback displays the application's "About" information, typically
+        including the application name, version, author details, and other
+        metadata. It provides users with a quick reference to the identity and
+        background of the software.
+
+        Workflow
+        --------
+        1. Triggered when the user selects "Help > About" from the menu.
+        2. Opens an "About" dialog or page containing application details.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (displaying an About dialog) but
+            does not return a value.
+
+        Notes
+        -----
+        - The exact content of the "About" dialog may include application
+          metadata such as version, author, license, and company information.
+        - Implementation relies on the GUI framework (`tkinter` or a browser
+          instance) to render the dialog or page.
+        """
 
         about = tk.Toplevel(self.root)
         self.set_title(widget=about, title='About')
@@ -616,21 +1234,20 @@ class Application:
         ).grid(row=2, column=0, sticky=tk.W)
 
         # PyYAML package
-        self.create_custom_label(
-            frame, text=Data.pyyaml_text,
-            link=Data.pyyaml_link
-        ).grid(row=3, column=0, padx=(20, 0), pady=(0, 10), sticky=tk.W)
+        label = self.create_custom_label(
+            frame, text=Data.pyyaml_text, link=Data.pyyaml_link
+        )
+        label.grid(row=3, column=0, padx=(20, 0), pady=(0, 10), sticky=tk.W)
 
         # genericlib package
-        self.create_custom_label(
-            frame, text=Data.gtgenlib_text,
-            link=Data.gtgenlib_link
-        ).grid(row=3, column=1, padx=(20, 0), pady=(0, 10), sticky=tk.W)
+        label = self.create_custom_label(
+            frame, text=Data.gtgenlib_text, link=Data.gtgenlib_link
+        )
+        label.grid(row=3, column=1, padx=(20, 0), pady=(0, 10), sticky=tk.W)
 
         # license textbox
         lframe = self.LabelFrame(
-            paned_window, height=200, width=450,
-            text=Data.license_name
+            paned_window, height=200, width=450, text=Data.license_name
         )
         paned_window.add(lframe, weight=7)
 
@@ -638,7 +1255,8 @@ class Application:
         height = 18 if self.is_macos else 14 if self.is_linux else 15
         txtbox = self.TextArea(lframe, width=width, height=height, wrap='word')
         txtbox.grid(row=0, column=0, padx=5, pady=5)
-        scrollbar = ttk.Scrollbar(lframe, orient=tk.VERTICAL, command=txtbox.yview)
+        scrollbar = ttk.Scrollbar(lframe, orient=tk.VERTICAL,
+                                  command=txtbox.yview)
         scrollbar.grid(row=0, column=1, sticky='nsew')
         txtbox.config(yscrollcommand=scrollbar.set)
         txtbox.insert(tk.INSERT, Data.license)
@@ -648,19 +1266,46 @@ class Application:
         frame = self.Frame(paned_window, width=450, height=20)
         paned_window.add(frame, weight=1)
 
-        self.Label(frame, text=Data.copyright_text).pack(side=tk.LEFT, pady=(10, 10))
+        label = self.Label(frame, text=Data.copyright_text)
+        label.pack(side=tk.LEFT, pady=(10, 10))
 
-        self.create_custom_label(
-            frame, text=Data.company, link=Data.company_url
-        ).pack(side=tk.LEFT, pady=(10, 10))
+        label = self.create_custom_label(frame, text=Data.company,
+                                         link=Data.company_url)
+        label.pack(side=tk.LEFT, pady=(10, 10))
 
-        self.Label(frame, text='.  All right reserved.').pack(side=tk.LEFT, pady=(10, 10))
+        label = self.Label(frame, text='.  All right reserved.')
+        label.pack(side=tk.LEFT, pady=(10, 10))
 
         set_modal_dialog(about)
 
     def callback_preferences_settings(self):
-        """Callback for Menu Preferences > Settings"""
+        """
+        Handle the "Preferences > Settings" menu action.
 
+        This callback opens the application's settings interface, allowing
+        users to configure preferences such as default behaviors, appearance,
+        or other customizable options. It provides a centralized entry point
+        for managing user-specific configurations.
+
+        Workflow
+        --------
+        1. Triggered when the user selects "Preferences > Settings" from the menu.
+        2. Launches the settings dialog or page.
+        3. Allows the user to view and modify application preferences.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (opening the settings interface)
+            but does not return a value.
+
+        Notes
+        -----
+        - The exact implementation of the settings dialog depends on the GUI
+          framework and may include tabs, checkboxes, or input fields.
+        - Preferences updated here typically persist across sessions or are
+          stored in the application's configuration.
+        """
         settings = tk.Toplevel(self.root)
         self.set_title(widget=settings, title='Settings')
         width = 544 if self.is_macos else 500 if self.is_linux else 392
@@ -670,13 +1315,11 @@ class Application:
         settings.resizable(False, False)
 
         top_frame = self.Frame(settings)
-        top_frame.pack(fill=tk.BOTH, expand=True)
+        top_frame.pack(fill=tk.BOTH, expand=True)  # noqa
 
         # Settings - Arguments
-        lframe_args = self.LabelFrame(
-            top_frame, height=360, width=380,
-            text='Arguments'
-        )
+        lframe_args = self.LabelFrame(top_frame, height=360, width=380,
+                                      text='Arguments')
         lframe_args.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
 
         # arguments checkboxes
@@ -695,7 +1338,8 @@ class Application:
 
         self.Label(
             lframe_args, text='Max Words'
-        ).grid(row=1, column=0, columnspan=2, padx=2, pady=(5, pady), sticky=tk.W)
+        ).grid(row=1, column=0, columnspan=2, padx=2, pady=(5, pady),
+               sticky=tk.W)
 
         self.TextBox(
             lframe_args, width=5, textvariable=self.max_words_var
@@ -743,17 +1387,19 @@ class Application:
 
         self.Label(
             lframe_args, text='Company'
-        ).grid(row=7, column=0, columnspan=2, padx=2, pady=(pady, 10), sticky=tk.W)
+        ).grid(row=7, column=0, columnspan=2, padx=2, pady=(pady, 10),
+               sticky=tk.W)
         self.TextBox(
             lframe_args, width=45,
             textvariable=self.company_var
-        ).grid(row=7, column=2, columnspan=4, padx=2, pady=(pady, 10), sticky=tk.W)
+        ).grid(row=7, column=2, columnspan=4, padx=2, pady=(pady, 10),
+               sticky=tk.W)
 
         # OK and Default buttons
         frame = self.Frame(
             top_frame, height=20, width=380
         )
-        frame.grid(row=2, column=0, padx=10, pady=10, sticky=tk.E+tk.S)
+        frame.grid(row=2, column=0, padx=10, pady=10, sticky=tk.E + tk.S)
 
         self.Button(
             frame, text='Default',
@@ -767,16 +1413,39 @@ class Application:
 
         set_modal_dialog(settings)
 
-    def do_show_system_references_or_symbol_references(self, title='', filename=''):
-        """Show dialog for Menu Preferences > System References or
-        Menu Preferences > Symbol References
+    def do_show_system_references_or_symbol_references(self, title='',
+                                                       filename=''):
+        """
+        Display a dialog for viewing system or symbol references.
+
+        This method is triggered from the "Preferences > System References"
+        or "Preferences > Symbol References" menu options. It opens a dialog
+        window that loads and displays reference data from the specified file,
+        allowing users to review predefined keywords, patterns, or symbols.
 
         Parameters
         ----------
-        title (str): a title of dialog.
-        filename (str): a file name.
+        title : str, optional
+            The title of the dialog window. Defaults to an empty string.
+            If provided, the dialog title is set accordingly.
+        filename : str, optional
+            The name of the file containing reference data to display.
+            Defaults to an empty string.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (opening a dialog and loading
+            reference data) but does not return a value.
+
+        Notes
+        -----
+        - The dialog may be used for inspecting either system-level references
+          or symbol references depending on the menu action.
+        - The `filename` argument should point to a valid reference file
+          (e.g., `system_references.yaml` or `symbol_references.yaml`).
         """
-        sys_ref = tk.Toplevel(self.root)
+        sys_ref = tk.Toplevel(self.root)  # noqa
         self.set_title(widget=sys_ref, title=title)
         width, height = 600, 500
         x, y = get_relative_center_location(self.root, width, height)
@@ -788,57 +1457,184 @@ class Application:
         panedwindow = self.PanedWindow(top_frame, orient=tk.VERTICAL)
         panedwindow.pack(fill=tk.BOTH, expand=True)
 
-        text_frame = self.Frame(
-            panedwindow, width=500, height=300, relief=tk.RIDGE
-        )
+        text_frame = self.Frame(panedwindow, width=500, height=300,
+                                relief=tk.RIDGE)
         panedwindow.add(text_frame, weight=9)
 
         text_frame.rowconfigure(0, weight=1)
         text_frame.columnconfigure(0, weight=1)
 
         textarea = self.TextArea(text_frame, width=20, height=5, wrap='none')
-        with open(filename) as stream:
+        with open(filename, encoding="utf-8") as stream:
             content = stream.read()
             self.set_textarea(textarea, content)
 
         textarea.grid(row=0, column=0, sticky='nswe')
-        vscrollbar = ttk.Scrollbar(
-            text_frame, orient=tk.VERTICAL, command=textarea.yview
-        )
+
+        vscrollbar = ttk.Scrollbar(text_frame, orient=tk.VERTICAL, command=textarea.yview)
         vscrollbar.grid(row=0, column=1, sticky='ns')
-        hscrollbar = ttk.Scrollbar(
-            text_frame, orient=tk.HORIZONTAL, command=textarea.xview
-        )
+
+        hscrollbar = ttk.Scrollbar(text_frame, orient=tk.HORIZONTAL,
+                                   command=textarea.xview)
         hscrollbar.grid(row=1, column=0, sticky='ew')
-        textarea.config(
-            yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set,
-            state=tk.DISABLED
-        )
+
+        textarea.config(yscrollcommand=vscrollbar.set,
+                        xscrollcommand=hscrollbar.set,
+                        state=tk.DISABLED)
 
         padx, pady = (0, 0) if self.is_macos else (2, 2)
-        self.Button(top_frame, text='OK',
-                    command=lambda: sys_ref.destroy()
-                    ).pack(side=tk.RIGHT, padx=padx, pady=pady)
+
+        button = self.Button(top_frame, text='OK',
+                             command=lambda: sys_ref.destroy())
+        button.pack(side=tk.RIGHT, padx=padx, pady=pady)
 
         set_modal_dialog(sys_ref)
 
     def callback_preferences_system_reference(self):
-        """Callback for Menu Preferences > System References"""
+        """
+        Handle the "Preferences > System References" menu action.
+
+        This callback opens a dialog for viewing system reference data. It
+        delegates to `do_show_system_references_or_symbol_references`, passing
+        the appropriate title and filename defined in `Data.system_reference_filename`.
+
+        Workflow
+        --------
+        1. Triggered when the user selects "Preferences > System References"
+           from the menu.
+        2. Calls `do_show_system_references_or_symbol_references` with:
+           - title set to "System References"
+           - filename set to the system reference file path
+        3. Displays a dialog containing system-level reference information.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (opening a dialog) but does not
+            return a value.
+
+        Notes
+        -----
+        - The system reference file typically contains predefined keywords,
+          patterns, or symbols used by the application.
+        - This callback ensures consistency by centralizing the filename in
+          `Data.system_reference_filename`.
+        """
         self.do_show_system_references_or_symbol_references(
             title="System References",
             filename=Data.system_reference_filename
         )
 
     def callback_preferences_symbol_reference(self):
-        """Callback for Menu Preferences > System References"""
+        """
+        Handle the "Preferences > Symbol References" menu action.
+
+        This callback opens a dialog for viewing symbol reference data. It
+        delegates to `do_show_system_references_or_symbol_references`, passing
+        the appropriate title and filename defined in `Data.symbol_reference_filename`.
+
+        Workflow
+        --------
+        1. Triggered when the user selects "Preferences > Symbol References"
+           from the menu.
+        2. Calls `do_show_system_references_or_symbol_references` with:
+           - title set to "Symbol References"
+           - filename set to the symbol reference file path
+        3. Displays a dialog containing symbol-level reference information.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (opening a dialog) but does not
+            return a value.
+
+        Notes
+        -----
+        - The symbol reference file typically contains predefined symbols,
+          tokens, or identifiers used by the application.
+        - This callback ensures consistency by centralizing the filename in
+          `Data.symbol_reference_filename`.
+        """
+
         self.do_show_system_references_or_symbol_references(
             title="Symbol References",
             filename=Data.symbol_reference_filename
         )
 
     def callback_preferences_user_reference(self):
-        """Callback for Menu Preferences > User References"""
+        """
+        Handle the "Preferences > User References" menu action.
+
+        This callback opens a dialog for viewing or editing user-defined
+        reference data. It delegates to
+        `do_show_system_references_or_symbol_references`, passing the
+        appropriate title and filename defined in
+        `Data.user_reference_filename`.
+
+        Workflow
+        --------
+        1. Triggered when the user selects "Preferences > User References"
+           from the menu.
+        2. Calls `do_show_system_references_or_symbol_references` with:
+           - title set to "User References"
+           - filename set to the user reference file path
+        3. Displays a dialog containing user-specific reference information.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (opening a dialog) but does not
+            return a value.
+
+        Notes
+        -----
+        - The user reference file typically contains custom keywords, patterns,
+          or symbols defined by the user.
+        - This callback ensures consistency by centralizing the filename in
+          `Data.user_reference_filename`.
+        """
+
+        # Start of logic for the save inner function.
         def save(node):
+            """
+            Save updated user reference data from a `tk.Text` widget.
+
+            This inner function retrieves the current content of the user reference
+            text area, compares it against the existing file content, and writes
+            changes back to the user reference file if modifications are detected.
+            It validates the new content before saving and updates the in-memory
+            reference object (`REF`). If validation fails, an error message box is
+            displayed.
+
+            Parameters
+            ----------
+            node : tk.Text
+                A tkinter `Text` widget containing the user reference data to be saved.
+
+            Returns
+            -------
+            None
+                This function performs side effects (file I/O, validation, and UI
+                updates) but does not return a value.
+
+            Workflow
+            --------
+            1. Read the original content from `Data.user_reference_filename`.
+            2. Retrieve the new content from the `tk.Text` widget.
+            3. If the new content matches the original (ignoring whitespace), do nothing.
+            4. Otherwise:
+               - Validate the new content using `REF.test`.
+               - Write the new content back to the user reference file.
+               - Parse the content as YAML and update `REF` with the new data.
+               - If validation or parsing fails, display an error message box.
+
+            Notes
+            -----
+            - Content is validated before being persisted to ensure correct format.
+            - YAML parsing uses `yaml.SafeLoader` for security.
+            - Errors are caught and reported via a message box with the exception type
+              and message.
+            """
             fn_ = Data.user_reference_filename
             origin_content = open(fn_).read()
             new_content = node.get('1.0', 'end')
@@ -856,7 +1652,52 @@ class Application:
                     error = '{}: {}'.format(type(ex).__name__, ex)
                     create_msgbox(title='Invalid Format', error=error)
 
+        # Completion of the insert inner function logic.
+        # Start of logic for the insert inner function.
         def insert(var, node):
+            """
+            Insert a new user-defined pattern into the reference editor.
+
+            This inner function validates a proposed pattern name, ensures it is
+            unique, and appends a corresponding pattern layout to the content of
+            the user reference text area. If the name is invalid or already exists,
+            an error message box is displayed instead of modifying the content.
+
+            Parameters
+            ----------
+            var : tkinter.StringVar
+                A `StringVar` holding the proposed pattern name entered by the user.
+                The value is stripped of whitespace before validation.
+            node : tkinter.Text
+                A `Text` widget containing the current user reference content. The
+                new pattern layout is appended to this widget if validation succeeds.
+
+            Returns
+            -------
+            None
+                This function performs side effects (validation, error reporting,
+                and text widget updates) but does not return a value.
+
+            Workflow
+            --------
+            1. Retrieve and strip the proposed pattern name from `var`.
+            2. Validate the name against the regex `\w+` (alphanumeric and underscore).
+               - If invalid, show an error message and exit.
+            3. Check for duplication by scanning existing lines in `node`.
+               - If the name already exists, show an error message and exit.
+            4. Clear the `StringVar` value.
+            5. Retrieve a pattern layout template from `PatternReference`.
+            6. Replace the placeholder with the validated name.
+            7. Append the new layout to the existing content in `node`.
+            8. Refresh the `Text` widget with the updated content.
+
+            Notes
+            -----
+            - Error messages are displayed using `create_msgbox`.
+            - Pattern layouts are generated via `PatternReference.get_pattern_layout`.
+            - The insertion point is set to `tk.INSERT` to place the new content
+              at the current cursor position.
+            """
             name = var.get().strip()
             if not re.match(r'\w+$', name):
                 error = 'Name of pattern must be alphanumeric and/or underscore'
@@ -880,9 +1721,12 @@ class Application:
             var.set('')
             pattern_layout = PatternReference.get_pattern_layout(name)
             pattern_layout = pattern_layout.replace('name_placeholder', name)
-            new_content_ = '{}\n\n{}\n'.format(content_.strip(), pattern_layout).lstrip()
+            new_content_ = '{}\n\n{}\n'.format(content_.strip(),
+                                               pattern_layout).lstrip()
             node.delete("1.0", "end")
             node.insert(tk.INSERT, new_content_)
+
+        # Completion of the insert inner function logic.
 
         fn = Data.user_reference_filename
         file_obj = Path(fn)
@@ -910,9 +1754,7 @@ class Application:
         panedwindow = self.PanedWindow(top_frame, orient=tk.VERTICAL)
         panedwindow.pack(fill=tk.BOTH, expand=True)
 
-        text_frame = self.Frame(
-            panedwindow, width=500, height=300, relief=tk.RIDGE
-        )
+        text_frame = self.Frame(panedwindow, width=500, height=300, relief=tk.RIDGE)
         panedwindow.add(text_frame, weight=9)
 
         text_frame.rowconfigure(0, weight=1)
@@ -920,48 +1762,88 @@ class Application:
 
         textarea = self.TextArea(text_frame, width=20, height=5, wrap='none')
 
-        with open(Data.user_reference_filename) as stream:
+        with open(Data.user_reference_filename, encoding="utf-8") as stream:
             content = stream.read()
             self.set_textarea(textarea, content)
 
         textarea.grid(row=0, column=0, sticky='nswe')
-        vscrollbar = ttk.Scrollbar(
-            text_frame, orient=tk.VERTICAL, command=textarea.yview
-        )
+
+        vscrollbar = ttk.Scrollbar(text_frame, orient=tk.VERTICAL, command=textarea.yview)
         vscrollbar.grid(row=0, column=1, sticky='ns')
-        hscrollbar = ttk.Scrollbar(
-            text_frame, orient=tk.HORIZONTAL, command=textarea.xview
-        )
+
+        hscrollbar = ttk.Scrollbar(text_frame, orient=tk.HORIZONTAL, command=textarea.xview)
         hscrollbar.grid(row=1, column=0, sticky='ew')
+
         textarea.config(
             yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set,
         )
 
         padx, pady = (0, 0) if self.is_macos else (2, 2)
 
-        self.Button(
-            top_frame, text='Save', command=lambda: save(textarea)
-        ).pack(side=tk.RIGHT, padx=padx, pady=pady)
+        button = self.Button(top_frame, text='Save',
+                             command=lambda: save(textarea))
+        button.pack(side=tk.RIGHT, padx=padx, pady=pady)
 
-        self.Button(
-            top_frame, text='Close', command=lambda: user_ref.destroy()
-        ).pack(side=tk.RIGHT, padx=padx, pady=pady)
+        button = self.Button(top_frame, text='Close',
+                             command=lambda: user_ref.destroy())
+        button.pack(side=tk.RIGHT, padx=padx, pady=pady)
 
-        self.Label(top_frame, text='Name:').pack(side=tk.LEFT, padx=padx, pady=pady)
+        label = self.Label(top_frame, text='Name:')
+        label.pack(side=tk.LEFT, padx=padx, pady=pady)
 
-        self.TextBox(
+        textbox = self.TextBox(
             top_frame, width=25, textvariable=self.new_pattern_name_var
-        ).pack(side=tk.LEFT, padx=padx, pady=pady)
+        )
+        textbox.pack(side=tk.LEFT, padx=padx, pady=pady)
 
-        self.Button(
+        button = self.Button(
             top_frame, text='Insert',
             command=lambda: insert(self.new_pattern_name_var, textarea),
-        ).pack(side=tk.LEFT, padx=padx, pady=pady)
+        )
+        button.pack(side=tk.LEFT, padx=padx, pady=pady)
 
         set_modal_dialog(user_ref)
 
     def build_menu(self):
-        """Build menubar for Regex GUI."""
+        """
+        Construct the main menubar for the Regex GUI application.
+
+        This method initializes and attaches a menubar to the root window,
+        organizing commands under **File**, **Preferences**, and **Help**
+        categories. Each menu provides access to core functionality such as
+        file operations, application preferences, and help resources.
+
+        Workflow
+        --------
+        1. Create a `tk.Menu` instance and attach it to the root window.
+        2. Define submenus:
+           - **File**
+             * Open: Launches a file dialog to load text data.
+             * Quit: Exits the application.
+           - **Preferences**
+             * Settings: Opens the settings dialog.
+             * System References: Displays system reference data.
+             * Symbol References: Displays symbol reference data.
+             * User References: Displays user-defined reference data.
+           - **Help**
+             * Documentation: Opens the "Getting Started" guide in a browser.
+             * View Licenses: Opens the license information page.
+             * About: Displays application metadata.
+        3. Add separators between logical groups of commands for clarity.
+
+        Returns
+        -------
+        None
+            This method performs side effects (constructing and attaching the
+            menubar) but does not return a value.
+
+        Notes
+        -----
+        - The menubar is attached to `self.root` via `self.root.config(menu=...)`.
+        - Each command delegates to a corresponding callback method for handling
+          user actions.
+        - Separators are used to visually group related commands.
+        """
         menu_bar = tk.Menu(self.root)
         self.root.config(menu=menu_bar)
         file = tk.Menu(menu_bar)
@@ -972,7 +1854,8 @@ class Application:
         menu_bar.add_cascade(menu=preferences, label='Preferences')
         menu_bar.add_cascade(menu=help_, label='Help')
 
-        file.add_command(label='Open', command=lambda: self.callback_file_open())
+        file.add_command(label='Open',
+                         command=lambda: self.callback_file_open())
         file.add_separator()
         file.add_command(label='Quit', command=lambda: self.root.quit())
 
@@ -1000,47 +1883,148 @@ class Application:
         help_.add_command(label='View Licenses',
                           command=lambda: self.callback_help_view_licenses())
         help_.add_separator()
-        help_.add_command(label='About', command=lambda: self.callback_help_about())
+        help_.add_command(label='About',
+                          command=lambda: self.callback_help_about())
 
     def build_frame(self):
-        """Build layout for regex GUI."""
+        """
+        Construct the main frame layout for the Regex GUI.
+
+        This method builds the vertical layout of the application using a
+        `PanedWindow` container. It organizes three primary frames:
+        - **Text Frame**: Holds the input text area for test data.
+        - **Entry Frame**: Contains action buttons and controls.
+        - **Result Frame**: Displays the output or test results.
+
+        Workflow
+        --------
+        1. Create a vertical `PanedWindow` and attach it to the root window.
+        2. Define three frames with fixed dimensions and ridge borders:
+           - `text_frame` (600×300)
+           - `entry_frame` (600×40)
+           - `result_frame` (600×350)
+        3. Add the frames to the `PanedWindow` with relative weights to control
+           resizing behavior:
+           - `text_frame` → weight=4
+           - `entry_frame` → default weight
+           - `result_frame` → weight=5
+
+        Returns
+        -------
+        None
+            This method performs side effects (constructing and attaching frames)
+            but does not return a value.
+
+        Notes
+        -----
+        - The `PanedWindow` is packed to fill both dimensions and expand with
+          padding for spacing.
+        - Frame weights determine how much space each section receives when
+          resizing the window.
+        """
         self.panedwindow = self.PanedWindow(self.root, orient=tk.VERTICAL)
         self.panedwindow.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
 
-        self.text_frame = self.Frame(
-            self.panedwindow, width=600, height=300, relief=tk.RIDGE
-        )
-        self.entry_frame = self.Frame(
-            self.panedwindow, width=600, height=40, relief=tk.RIDGE
-        )
-        self.result_frame = self.Frame(
-            self.panedwindow, width=600, height=350, relief=tk.RIDGE
-        )
+        self.text_frame = self.Frame(self.panedwindow, width=600, height=300,
+                                     relief=tk.RIDGE)
+
+        self.entry_frame = self.Frame(self.panedwindow, width=600, height=40,
+                                      relief=tk.RIDGE)
+
+        self.result_frame = self.Frame(self.panedwindow, width=600, height=350, relief=tk.RIDGE)
+
         self.panedwindow.add(self.text_frame, weight=4)
         self.panedwindow.add(self.entry_frame)
         self.panedwindow.add(self.result_frame, weight=5)
 
     def build_textarea(self):
-        """Build input text for regex GUI."""
+        """
+        Construct the input text area for the Regex GUI.
 
+        This method creates a scrollable `TextArea` widget inside the
+        `text_frame`. The widget serves as the primary input field for
+        entering or editing text data used in regex testing. Both vertical
+        and horizontal scrollbars are attached to support navigation of
+        large or unwrapped text content.
+
+        Workflow
+        --------
+        1. Configure the `text_frame` grid to allow resizing:
+           - Row 0 and column 0 are given weight for expansion.
+        2. Create a `TextArea` widget with fixed dimensions and no wrapping.
+        3. Place the `TextArea` in the grid at row 0, column 0, expanding
+           in all directions (`nswe`).
+        4. Add a vertical scrollbar linked to the `yview` of the text area.
+        5. Add a horizontal scrollbar linked to the `xview` of the text area.
+        6. Configure the text area to update scrollbar positions during
+           scrolling.
+
+        Returns
+        -------
+        None
+            This method performs side effects (constructing and attaching
+            widgets) but does not return a value.
+
+        Notes
+        -----
+        - The `wrap='none'` option ensures text does not automatically wrap,
+          making horizontal scrolling necessary for long lines.
+        - Scrollbars are synchronized with the text area via `yscrollcommand`
+          and `xscrollcommand`.
+        """
         self.text_frame.rowconfigure(0, weight=1)
         self.text_frame.columnconfigure(0, weight=1)
-        self.input_textarea = self.TextArea(self.text_frame, width=20, height=5, wrap='none')
+        self.input_textarea = self.TextArea(self.text_frame, width=20, height=5,
+                                            wrap='none')
         self.input_textarea.grid(row=0, column=0, sticky='nswe')
-        vscrollbar = ttk.Scrollbar(
-            self.text_frame, orient=tk.VERTICAL, command=self.input_textarea.yview
-        )
+
+        vscrollbar = ttk.Scrollbar(self.text_frame, orient=tk.VERTICAL,
+                                   command=self.input_textarea.yview)
         vscrollbar.grid(row=0, column=1, sticky='ns')
-        hscrollbar = ttk.Scrollbar(
-            self.text_frame, orient=tk.HORIZONTAL, command=self.input_textarea.xview
-        )
+
+        hscrollbar = ttk.Scrollbar(self.text_frame, orient=tk.HORIZONTAL,
+                                   command=self.input_textarea.xview)
         hscrollbar.grid(row=1, column=0, sticky='ew')
+
         self.input_textarea.config(
             yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set
         )
 
     def build_entry(self):
-        """Build input entry for regex GUI."""
+        """
+        Construct the entry controls section for the Regex GUI.
+
+        This method builds the `entry_frame` portion of the interface, which
+        contains interactive widgets such as buttons, text fields, and other
+        controls used to trigger actions (e.g., opening files, running regex
+        tests, saving results, or switching modes). It provides the user with
+        the primary means of interacting with the application beyond text input.
+
+        Workflow
+        --------
+        1. Initialize the `entry_frame` container.
+        2. Populate the frame with action-oriented widgets (buttons, textboxes,
+           comboboxes, etc.).
+        3. Configure layout and grid options to ensure controls are aligned
+           and responsive to resizing.
+
+        Returns
+        -------
+        None
+            This method performs side effects (constructing and attaching
+            widgets) but does not return a value.
+
+        Notes
+        -----
+        - The `entry_frame` is positioned between the text input area and
+          the result display frame.
+        - Widgets added here typically connect to callback methods such as
+          `callback_file_open`, `callback_preferences_*`, or regex execution
+          functions.
+        - Acts as the control hub for user actions in the GUI.
+        """
+
+        # Start of logic for the callback_build_btn inner function.
         def callback_build_btn():
             user_data = Application.get_textarea(self.input_textarea)
             if not user_data:
@@ -1070,12 +2054,14 @@ class Application:
                     total = len(patterns)
                     if total >= 1:
                         if total == 1:
-                            result = 'pattern = r{}'.format(enclose_string(patterns[0]))
+                            result = 'pattern = r{}'.format(
+                                enclose_string(patterns[0]))
                         else:
                             lst = []
                             fmt = 'pattern{} = r{}'
                             for index, pattern in enumerate(patterns, 1):
-                                lst.append(fmt.format(index, enclose_string(pattern)))
+                                lst.append(
+                                    fmt.format(index, enclose_string(pattern)))
                             result = '\n'.join(lst)
                         self.test_data_btn_var.set('Test Data')
                         self.set_textarea(self.result_textarea, result)
@@ -1088,13 +2074,18 @@ class Application:
                     error = '{}: {}'.format(type(ex).__name__, ex)
                     create_msgbox(title='RegexBuilder Error', error=error)
 
+        # Completion of the callback_build_btn inner function logic.
+
+        # Start of logic for the callback_save_as_btn inner function.
         def callback_save_as_btn():
             filename = filedialog.asksaveasfilename()
             if filename:
                 with open(filename, 'w') as stream:
                     content = Application.get_textarea(self.result_textarea)
                     stream.write(content)
+        # Completion of the callback_save_as_btn inner function logic.
 
+        # Start of logic for the callback_clear_text_btn inner function.
         def callback_clear_text_btn():
             self.input_textarea.delete("1.0", "end")
             self.result_textarea.delete("1.0", "end")
@@ -1106,13 +2097,18 @@ class Application:
             self.test_data_btn_var.set('Test Data')
             # self.root.clipboard_clear()
             self.set_title()
+        # Completion of the callback_clear_text_btn inner function logic.
 
+        # Start of logic for the callback_copy_text_btn inner function.
         def callback_copy_text_btn():
             content = Application.get_textarea(self.result_textarea)
             self.root.clipboard_clear()
             self.root.clipboard_append(content)
             self.root.update()
 
+        # Completion of the callback_copy_text_btn inner function logic.
+
+        # Start of logic for the callback_paste_text_btn inner function.
         def callback_paste_text_btn():
             try:
                 data = self.root.clipboard_get()
@@ -1127,14 +2123,17 @@ class Application:
 
                 title = '<<PASTE - Clipboard>>'
                 self.set_textarea(self.input_textarea, data, title=title)
-            except Exception as ex:     # noqa
+            except Exception as ex:  # noqa
                 create_msgbox(
                     title='Empty Clipboard',
                     info='CAN NOT paste because there is no data in pasteboard.'
                 )
 
+        # Completion of the callback_paste_text_btn inner function logic.
+
+        # Start of logic for the callback_snippet_btn inner function.
         def callback_snippet_btn():
-            if self.snapshot.test_data is None:     # noqa
+            if self.snapshot.test_data is None:  # noqa
                 create_msgbox(
                     title='No Test Data',
                     error=("Can NOT build Python test script without "
@@ -1155,7 +2154,7 @@ class Application:
                 kwargs = self.get_regexbuilder_args()
                 factory = RegexBuilder(
                     user_data=user_data,
-                    test_data=self.snapshot.test_data,      # noqa
+                    test_data=self.snapshot.test_data,  # noqa
                     **kwargs
                 )
 
@@ -1169,8 +2168,11 @@ class Application:
                 error = '{}: {}'.format(type(ex).__name__, ex)
                 create_msgbox(title='RegexBuilder Error', error=error)
 
+        # Completion of the callback_snippet_btn inner function logic.
+
+        # Start of logic for the callback_unittest_btn inner function.
         def callback_unittest_btn():
-            if self.snapshot.test_data is None:     # noqa
+            if self.snapshot.test_data is None:  # noqa
                 create_msgbox(
                     title='No Test Data',
                     error=("Can NOT build Python Unittest script without "
@@ -1205,8 +2207,11 @@ class Application:
                 error = '{}: {}'.format(type(ex).__name__, ex)
                 create_msgbox(title='RegexBuilder Error', error=error)
 
+        # Completion of the callback_unittest_btn inner function logic.
+
+        # Start of logic for the callback_pytest_btn inner function.
         def callback_pytest_btn():
-            if self.snapshot.test_data is None:     # noqa
+            if self.snapshot.test_data is None:  # noqa
                 create_msgbox(
                     title='No Test Data',
                     error=("Can NOT build Python Pytest script without "
@@ -1241,8 +2246,11 @@ class Application:
                 error = '{}: {}'.format(type(ex).__name__, ex)
                 create_msgbox(title='RegexBuilder Error', error=error)
 
+        # Completion of the callback_pytest_btn inner function logic.
+
+        # Start of logic for the callback_test_data_btn inner function.
         def callback_test_data_btn():
-            if self.snapshot.test_data is None:     # noqa
+            if self.snapshot.test_data is None:  # noqa
                 create_msgbox(
                     title='No Test Data',
                     error="Please use Open or Paste button to load test data"
@@ -1254,40 +2262,45 @@ class Application:
                 self.test_data_btn_var.set('Hide')
                 self.set_textarea(
                     self.result_textarea,
-                    self.snapshot.test_data     # noqa
+                    self.snapshot.test_data  # noqa
                 )
             else:
                 self.test_data_btn_var.set('Test Data')
                 self.set_textarea(
                     self.result_textarea,
-                    self.snapshot.test_result   # noqa
+                    self.snapshot.test_result  # noqa
                 )
 
+        # Completion of the callback_test_data_btn inner function logic.
+
+        # Start of logic for the callback_builder_chkbox inner function.
         def callback_builder_chkbox():
             if self.is_pattern_builder_app:
                 self.shift_to_pattern_builder_app()
             else:
                 self.shift_to_regex_builder_app()
 
+        # Completion of the callback_builder_chkbox inner function logic.
+
+        # Start of logic for the callback_rf_btn inner function.
         def callback_rf_btn():
             create_msgbox(
                 title='Robotframework feature',
                 info="The Robotframework button will be available starting with the 1.x release."
             )
 
+        # Completion of the callback_rf_btn inner function logic.
+
         # radio buttons
-        self.line_radio_btn = self.RadioButton(
-            self.entry_frame, text='line',
-            variable=self.radio_line_or_multiline_btn_var,
-            value='line'
-        )
+        self.line_radio_btn = self.RadioButton(self.entry_frame, text='line',
+                                               variable=self.radio_line_or_multiline_btn_var,
+                                               value='line')
         self.line_radio_btn.grid(row=0, column=0, padx=(4, 0))
 
         self.multiline_radio_btn = self.RadioButton(
             self.entry_frame, text='multiline',
             variable=self.radio_line_or_multiline_btn_var,
-            value='multiline'
-        )
+            value='multiline')
         self.multiline_radio_btn.grid(row=0, column=1, padx=2)
 
         btn_width = 5.5 if self.is_macos else 8
@@ -1364,13 +2377,15 @@ class Application:
         builder_chkbox.grid(row=0, column=12)
 
         self.var_name_frame = self.Frame(self.entry_frame)
-        self.Label(self.var_name_frame, text='var_name').pack(padx=(10, 4), side=tk.LEFT)
+        self.Label(self.var_name_frame, text='var_name').pack(padx=(10, 4),
+                                                              side=tk.LEFT)
         self.TextBox(
             self.var_name_frame, width=12, textvariable=self.var_name_var
         ).pack(side=tk.LEFT)
 
         self.word_bound_frame = self.Frame(self.entry_frame)
-        self.Label(self.word_bound_frame, text='word_bound').pack(padx=(10, 4), side=tk.LEFT)
+        self.Label(self.word_bound_frame, text='word_bound').pack(padx=(10, 4),
+                                                                  side=tk.LEFT)
         ttk.Combobox(
             self.word_bound_frame,
             state='readonly',
@@ -1385,33 +2400,117 @@ class Application:
         # rf_btn.grid(row=0, column=11)
 
     def build_result(self):
-        """Build result text"""
+        """
+        Construct the result display area for the Regex GUI.
+
+        This method creates a scrollable `TextArea` widget inside the
+        `result_frame`. The widget serves as the output field for displaying
+        regex matches, test results, or other feedback generated by the
+        application. Both vertical and horizontal scrollbars are attached to
+        support navigation of large or unwrapped result content.
+
+        Workflow
+        --------
+        1. Configure the `result_frame` grid to allow resizing:
+           - Row 0 and column 0 are given weight for expansion.
+        2. Create a `TextArea` widget with fixed dimensions and no wrapping.
+        3. Place the `TextArea` in the grid at row 0, column 0, expanding
+           in all directions (`nswe`).
+        4. Add a vertical scrollbar linked to the `yview` of the result area.
+        5. Add a horizontal scrollbar linked to the `xview` of the result area.
+        6. Configure the result area to update scrollbar positions during
+           scrolling.
+
+        Returns
+        -------
+        None
+            This method performs side effects (constructing and attaching
+            widgets) but does not return a value.
+
+        Notes
+        -----
+        - The `wrap='none'` option ensures text does not automatically wrap,
+          making horizontal scrolling necessary for long lines of output.
+        - Scrollbars are synchronized with the result area via `yscrollcommand`
+          and `xscrollcommand`.
+        """
         self.result_frame.rowconfigure(0, weight=1)
         self.result_frame.columnconfigure(0, weight=1)
         self.result_textarea = self.TextArea(
             self.result_frame, width=20, height=5, wrap='none'
         )
         self.result_textarea.grid(row=0, column=0, sticky='nswe')
-        vscrollbar = ttk.Scrollbar(
-            self.result_frame, orient=tk.VERTICAL,
-            command=self.result_textarea.yview
-        )
+        vscrollbar = ttk.Scrollbar(self.result_frame, orient=tk.VERTICAL,
+                                   command=self.result_textarea.yview)
         vscrollbar.grid(row=0, column=1, sticky='ns')
-        hscrollbar = ttk.Scrollbar(
-            self.result_frame, orient=tk.HORIZONTAL,
-            command=self.result_textarea.xview
-        )
+
+        hscrollbar = ttk.Scrollbar(self.result_frame, orient=tk.HORIZONTAL,
+                                   command=self.result_textarea.xview)
         hscrollbar.grid(row=1, column=0, sticky='ew')
+
         self.result_textarea.config(
             yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set
         )
 
     def run(self):
-        """Launch regex GUI."""
+        """
+        Start the Regex GUI application.
+
+        This method launches the Tkinter main event loop, keeping the
+        application window responsive to user interactions such as menu
+        selections, text input, and dialog actions. It serves as the
+        primary entry point for running the GUI once the application
+        has been initialized.
+
+        Workflow
+        --------
+        1. Initialize the Tkinter event loop via `self.root.mainloop()`.
+        2. Keep the GUI active until the user closes the window or
+           explicitly terminates the application.
+
+        Returns
+        -------
+        None
+            This method performs a side effect (starting the event loop)
+            but does not return a value.
+
+        Notes
+        -----
+        - Must be called after the application layout and menus are built.
+        - Blocks further code execution until the GUI window is closed.
+        - Typically invoked by the `execute()` function or directly after
+          instantiating `Application`.
+        """
         self.root.mainloop()
 
 
 def execute():
-    """Launch regex GUI."""
+    """
+    Launch the Regex GUI application.
+
+    This function serves as the entry point for starting the graphical
+    interface of the `regexapp` library. It instantiates the `Application`
+    class and invokes its `run` method, initializing the main event loop
+    and displaying the GUI to the user.
+
+    Workflow
+    --------
+    1. Create an instance of `Application`.
+    2. Call `Application.run()` to start the Tkinter event loop.
+    3. Display the Regex GUI for interactive use.
+
+    Returns
+    -------
+    None
+        This function performs side effects (launching the GUI) but does
+        not return a value.
+
+    Notes
+    -----
+    - Intended to be used as the main entry point when launching the
+      application programmatically.
+    - Typically invoked from `__main__` or a command-line interface
+      wrapper.
+    """
     app = Application()
     app.run()
