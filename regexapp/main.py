@@ -19,6 +19,8 @@ from regexapp.application import Application
 from regexapp import RegexBuilder
 from regexapp.core import enclose_string
 
+import regexapp.utils as utils
+
 from genericlib import ECODE
 
 
@@ -199,36 +201,21 @@ class Cli:
         pattern = r'file( *name)?:: *(?P<filename>\S*)'
         m = re.match(pattern, self.options.user_data, re.I)
         if m:
-            try:
-                with open(m.group('filename')) as stream:
-                    self.options.user_data = stream.read()
-            except Exception as ex:
-                failure = '*** {}: {}'.format(type(ex).__name__, ex)
-                print(failure)
-                sys.exit(ECODE.BAD)
+            filename = m.group('filename')
+            self.options.user_data = utils.File.read_with_exit(filename)
 
         if self.options.test_data:
             m = re.match(pattern, self.options.test_data, re.I)
             if m:
-                try:
-                    with open(m.group('filename')) as stream:
-                        self.options.test_data = stream.read()
-                except Exception as ex:
-                    failure = '*** {}: {}'.format(type(ex).__name__, ex)
-                    print(failure)
-                    sys.exit(ECODE.BAD)
+                filename = m.group('filename')
+                self.options.user_data = utils.File.read_with_exit(filename)
 
         if self.options.config:
             config = self.options.config
             m = re.match(pattern, config, re.I)
             if m:
-                try:
-                    with open(m.group('filename')) as stream:
-                        content = stream.read()
-                except Exception as ex:
-                    failure = '*** {}: {}'.format(type(ex).__name__, ex)
-                    print(failure)
-                    sys.exit(ECODE.BAD)
+                filename = m.group('filename')
+                content = utils.File.read_with_exit(filename)
             else:
                 other_pat = r'''(?x)(
                     prepended_ws|appended_ws|ignore_case|

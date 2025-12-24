@@ -18,8 +18,6 @@ enclose_string(text: str) -> str
 create_docstring(test_framework='unittest', author='', email='', company='') -> str
     Generate a module-level docstring for a test script with optional
     metadata such as author, email, and company.
-save_file(filename: str, content: str) -> None
-    Save text content to a file.
 add_reference(name: str, pattern: str, **kwargs) -> None
     Add a keyword reference to the PatternReference collection for
     quick inline testing.
@@ -77,6 +75,7 @@ from regexapp.exceptions import PatternReferenceError
 
 from regexapp.collection import REF
 import regexapp
+import regexapp.utils as utils
 
 BASELINE_REF = deepcopy(REF)
 
@@ -167,53 +166,6 @@ def create_docstring(test_framework='unittest',
     else:
         module_docstr = '"""{}\n"""'.format('\n'.join(lst))
         return module_docstr
-
-
-def save_file(filename, content):
-    """
-    Write text content to a file with UTF-8 encoding.
-
-    This function normalizes the provided filename, ensures it is not empty,
-    and writes the given content to the file. If the file already exists,
-    its contents are overwritten. Any I/O errors encountered during the
-    operation are re-raised with additional context.
-
-    Parameters
-    ----------
-    filename : str
-        Name or path of the file to write. Leading and trailing whitespace
-        are stripped before use. If the resolved filename is empty, a
-        ValueError is raised.
-    content : str
-        Text content to be written into the file.
-
-    Returns
-    -------
-    None
-        This function does not return a value. It performs a file write
-        operation as a side effect.
-
-    Raises
-    ------
-    OSError
-        If an I/O error occurs while attempting to write to the file.
-
-    Notes
-    -----
-    - The file is opened in text mode with write access (`'w'`), which
-      overwrites any existing content.
-    - Content is written using UTF-8 encoding by default.
-    - Exceptions are re-raised with contextual information to aid debugging.
-    """
-
-    filename = str(filename).strip()
-    if filename:
-        try:
-            with open(filename, 'w', encoding="utf-8") as stream:
-                stream.write(content)
-        except OSError as ex:
-            # Re-raise with context
-            raise OSError(f"Failed to write to {filename}: {ex}") from ex
 
 
 class RegexBuilder:
@@ -1074,14 +1026,14 @@ class DynamicTestScriptBuilder:
           directly with Python’s unittest framework.
         - Metadata (author, email, company, filename) is embedded into the
           script if available.
-        - Saving to disk is performed via `save_file`; if `self.filename`
+        - Saving to disk is performed via `utils.File.write`; if `self.filename`
           is empty, the script is returned but not saved.
         - This method does not execute the generated tests; it only produces
           the script text.
         """
         factory = UnittestBuilder(self)
         test_script = factory.create()
-        save_file(self.filename, test_script)
+        utils.File.write(self.filename, test_script)
         return test_script
 
     def create_pytest(self):
@@ -1111,14 +1063,14 @@ class DynamicTestScriptBuilder:
           directly with pytest.
         - Metadata (author, email, company, filename) is embedded into the
           script if available.
-        - Saving to disk is performed via `save_file`; if `self.filename`
+        - Saving to disk is performed via `utils.File.write`; if `self.filename`
           is empty, the script is returned but not saved.
         - This method does not execute the generated tests; it only produces
           the script text.
         """
         factory = PytestBuilder(self)
         test_script = factory.create()
-        save_file(self.filename, test_script)
+        utils.File.write(self.filename, test_script)
         return test_script
 
     def create_rf_test(self):     # noqa
@@ -1170,14 +1122,14 @@ class DynamicTestScriptBuilder:
           directly with Python.
         - Metadata (author, email, company, filename) is embedded into the
           script if available.
-        - Saving to disk is performed via `save_file`; if `self.filename`
+        - Saving to disk is performed via `utils.File.write`; if `self.filename`
           is empty, the script is returned but not saved.
         - This method does not execute the generated tests; it only produces
           the script text.
         """
         factory = PythonSnippetBuilder(self)
         test_script = factory.create()
-        save_file(self.filename, test_script)
+        utils.File.write(self.filename, test_script)
         return test_script
 
 

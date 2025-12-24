@@ -38,6 +38,8 @@ import yaml
 from genericlib import version as gtlib_version
 from genericlib import File
 
+import regexapp.utils as utils
+
 __version__ = '0.5.1a1'
 version = __version__
 __edition__ = 'Community'
@@ -186,8 +188,7 @@ class Data:
     years = '2022'
     license_name = f'{company_name} License'
     copyright_text = f'Copyright \xa9 {years}'
-    with open("LICENSE", encoding="utf-8") as f:
-        license = f.read()
+    license = utils.File.read('LICENSE')
 
     @classmethod
     def get_dependency(cls):
@@ -255,10 +256,8 @@ class Data:
         - This method does not perform validation of the YAML structure;
           it only returns the file contents as text.
         """
-
-        with open(cls.system_reference_filename, encoding="utf-8") as stream:
-            content = stream.read()
-            return content
+        content = utils.File.read(Data.system_reference_filename)
+        return content
 
     @classmethod
     def get_defined_symbols(cls):
@@ -286,9 +285,8 @@ class Data:
         - This method does not perform validation of the YAML structure;
           it only returns the file contents as text.
         """
-        with open(cls.symbol_reference_filename, encoding="utf-8") as stream:
-            content = stream.read()
-            return content
+        content = utils.File.read(Data.symbol_reference_filename)
+        return content
 
     @classmethod
     def get_user_custom_keywords(cls):
@@ -327,6 +325,5 @@ class Data:
             File.create(filename)
             File.copy_file(sample_file, filename)
 
-        with open(filename, encoding="utf-8") as stream:
-            content = stream.read()
-            return content
+        content = utils.File.read(filename)
+        return content

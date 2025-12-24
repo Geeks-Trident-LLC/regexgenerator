@@ -60,6 +60,7 @@ from regexapp import PatternBuilder
 from regexapp.config import Data
 
 import regexapp.ui as ui
+import regexapp.utils as utils
 
 from genericlib import DotObject
 
@@ -1046,15 +1047,13 @@ class Application:
             ('All Files', '*'),
         ]
         filename = filedialog.askopenfilename(filetypes=filetypes)
-        if filename:
-            with open(filename, encoding="utf-8") as stream:
-                content = stream.read()
-                if not self.is_pattern_builder_app:
-                    self.test_data_btn.config(state=tk.NORMAL)
-                    self.test_data_btn_var.set('Test Data')
-                    self.set_textarea(self.result_textarea, '')
-                    self.snapshot.update(test_data=content)
-                self.set_textarea(self.input_textarea, content, title=filename)
+        content = utils.File.read(filename)
+        if not self.is_pattern_builder_app:
+            self.test_data_btn.config(state=tk.NORMAL)
+            self.test_data_btn_var.set('Test Data')
+            self.set_textarea(self.result_textarea, '')
+            self.snapshot.update(test_data=content)
+        self.set_textarea(self.input_textarea, content, title=filename)
 
     def callback_help_documentation(self):
         """
@@ -1423,9 +1422,8 @@ class Application:
 
         textarea = ui.create(self.TextArea, parent=text_frame,
                              width=20, height=5, wrap='none')
-        with open(filename, encoding="utf-8") as stream:
-            content = stream.read()
-            self.set_textarea(textarea, content)
+        content = utils.File.read(filename)
+        self.set_textarea(textarea, content)
 
         ui.grid(textarea, row=0, column=0, sticky='nswe')
 
@@ -1721,10 +1719,8 @@ class Application:
         text_frame.columnconfigure(0, weight=1)
 
         textarea = ui.create(self.TextArea, text_frame, width=20, height=5, wrap='none')
-
-        with open(Data.user_reference_filename, encoding="utf-8") as stream:
-            content = stream.read()
-            self.set_textarea(textarea, content)
+        content = utils.File.read(Data.user_reference_filename)
+        self.set_textarea(textarea, content)
 
         ui.grid(textarea, row=0, column=0, sticky='nswe')
 
@@ -2044,10 +2040,9 @@ class Application:
         # Start of logic for the callback_save_as_btn inner function.
         def callback_save_as_btn():
             filename = filedialog.asksaveasfilename()
-            if filename:
-                with open(filename, 'w') as stream:
-                    content = Application.get_textarea(self.result_textarea)
-                    stream.write(content)
+            content = Application.get_textarea(self.result_textarea)
+            utils.File.write(filename, content)
+
         # Completion of the callback_save_as_btn inner function logic.
 
         # Start of logic for the callback_clear_text_btn inner function.
