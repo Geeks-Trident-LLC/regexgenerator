@@ -1033,7 +1033,8 @@ class DynamicTestScriptBuilder:
         """
         factory = UnittestBuilder(self)
         test_script = factory.create()
-        utils.File.write(self.filename, test_script)
+        if self.filename:
+            utils.File.write(self.filename, test_script)
         return test_script
 
     def create_pytest(self):
@@ -1070,7 +1071,8 @@ class DynamicTestScriptBuilder:
         """
         factory = PytestBuilder(self)
         test_script = factory.create()
-        utils.File.write(self.filename, test_script)
+        if self.filename:
+            utils.File.write(self.filename, test_script)
         return test_script
 
     def create_rf_test(self):     # noqa
@@ -1129,7 +1131,8 @@ class DynamicTestScriptBuilder:
         """
         factory = PythonSnippetBuilder(self)
         test_script = factory.create()
-        utils.File.write(self.filename, test_script)
+        if self.filename:
+            utils.File.write(self.filename, test_script)
         return test_script
 
 
