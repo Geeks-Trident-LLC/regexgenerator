@@ -155,20 +155,44 @@ def do_soft_regex_escape(pattern: str, is_validated: bool = True) -> str:
 
 
 class VarCls:
-    """Use to store variable for pattern
-
-    Attribute
-    ---------
-    name (str): variable name.  Default is empty.
-    pattern (str): a regex pattern.  Default is empty.
-    option (str): an option for value assignment.  Default is empty.
-
-    Properties
-    ----------
-    is_empty -> bool
-    value -> str
-    var_name -> str
     """
+    Container class for storing variables associated with regex patterns.
+
+    This class encapsulates a variable name, its associated regex pattern,
+    and an optional assignment option. It provides convenience properties
+    for checking emptiness, formatting values, and generating a variable
+    reference string.
+
+    Parameters
+    ----------
+    name : str, optional
+        The variable name. Default is an empty string.
+    pattern : str, optional
+        A regex pattern associated with the variable. Default is an empty string.
+    option : str, optional
+        An option string for value assignment. Underscores are normalized
+        to commas, and capitalization is standardized. Default is an empty string.
+
+    Attributes
+    ----------
+    name : str
+        The variable name.
+    pattern : str
+        The regex pattern associated with the variable.
+    option : str
+        The normalized option string for value assignment.
+
+    Methods
+    -------
+    is_empty() -> bool
+        Returns True if the variable name is empty, False otherwise.
+    value() -> str
+        Returns a formatted string representation of the variable,
+        including its option (if present), name, and pattern.
+    var_name() -> str
+        Returns the variable name wrapped in `${...}` syntax.
+    """
+
     def __init__(self, name='', pattern='', option=''):
         self.name = str(name).strip()
         self.pattern = str(pattern)
@@ -177,24 +201,52 @@ class VarCls:
 
     @property
     def is_empty(self):
+        """
+        Check whether the variable name is empty.
+
+        This property evaluates whether the `name` attribute of the
+        variable has been set. It is useful for quickly determining
+        if the instance represents a defined variable or a placeholder.
+
+        Returns
+        -------
+        bool
+            True if the variable name is an empty string, False otherwise.
+        """
         return self.name == ''
 
     @property
     def value(self):
+        """
+        Return a formatted string representation of the variable.
+
+        If an option is present, it is normalized (underscores converted
+        to commas, capitalization standardized, and spaces removed) and
+        included in the output. Otherwise, only the variable name and
+        pattern are shown.
+
+        Returns
+        -------
+        str
+            A formatted string describing the variable.
+        """
         if self.option:
-            self.option = ','.join(re.split(r'\s*_\s*', str(self.option).title()))
-            self.option = self.option.replace(' ', '')
-            fmt = 'Value {} {} ({})'
-            value = fmt.format(self.option, self.name, self.pattern)
+            return f"Value {self.option} {self.name} ({self.pattern})"
         else:
-            fmt = 'Value {} ({})'
-            value = fmt.format(self.name, self.pattern)
-        return value
+            return f"Value {self.name} ({self.pattern})"
 
     @property
-    def var_name(self):
-        result = '${%s}' % self.name
-        return result
+    def var_name(self) -> str:
+        """
+        Return the variable name wrapped in `${...}` syntax.
+
+        Returns
+        -------
+        str
+            The variable name enclosed in `${}` for use in
+            template or substitution contexts.
+        """
+        return f"${{{self.name}}}"
 
 
 class PatternReference(dict):
