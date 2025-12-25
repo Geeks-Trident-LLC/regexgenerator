@@ -1,6 +1,43 @@
-"""Module containing the logic for the collection of pattern."""
+"""
+regexapp.collection
+===================
+
+Core collection of regex pattern classes and builders for the `regexapp`
+library. This module defines abstractions for representing, composing,
+and managing text patterns, enabling both programmatic construction and
+user‑defined customization.
+
+Classes
+-------
+TextPattern
+    Represents a single regex pattern applied to plain text.
+ElementPattern
+    Encapsulates regex logic for structured elements (e.g., tokens, fields).
+LinePattern
+    Provides regex matching and validation at the line level.
+MultilinePattern
+    Supports multi‑line regex patterns with contextual awareness.
+PatternBuilder
+    Utility for dynamically constructing and combining regex patterns.
+PatternReference
+    Handles references to predefined or user‑customized regex patterns.
+
+Notes
+-----
+- Patterns can be customized by end‑users via YAML configuration files:
+  - System defaults: `system_references.yaml`
+  - User overrides: `~/.geekstrident/regexapp/user_references.yaml`
+- The module is designed to integrate with `regexapp.core.RegexBuilder`
+  and `DynamicTestScriptBuilder` for generating test scripts and regex
+  workflows.
+- All classes follow a consistent API to support extensibility and
+  maintainability across the application.
+"""
+
 
 import re
+from typing import Optional, Type
+
 import yaml
 import string
 from textwrap import dedent
@@ -23,50 +60,97 @@ import logging
 logger = logging.getLogger(__file__)
 
 
-def validate_pattern(pattern, flags=0, exception_cls=None):
-    """validate a pattern
-
-    Parameters
-    ----------
-    pattern (str): a pattern.
-    exception_cls (Exception): an exception class.  Default is None.
+def validate_pattern(
+    pattern: str,
+    flags: int = 0,
+    exception_cls: Optional[Type[Exception]] = None
+) -> re.Pattern:
     """
-    exception_cls = exception_cls or Exception
-    try:
-        re.compile(pattern, flags=flags)
-    except Exception as ex:
-        msg = '{} - {}'.format(type(ex).__name__, ex)
-        raise exception_cls(msg)
+    Validate and compile a regular expression pattern.
 
-
-def do_soft_regex_escape(pattern, is_validated=True):
-    """Escape special characters in a string.  This method will help
-    consistency pattern during invoking re.escape on different Python version.
+    Attempts to compile the given regex pattern with optional flags.
+    If compilation fails, raises the specified exception class with
+    a descriptive error message.
 
     Parameters
     ----------
-    pattern (str): a pattern.
-    is_validated (bool): need to validate pattern after escape.  Default is False.
+    pattern : str
+        The regex pattern string to validate.
+    flags : int, default 0
+        Regex compilation flags (e.g., `re.IGNORECASE`, `re.MULTILINE`).
+    exception_cls : Type[Exception], optional
+        Custom exception class to raise on failure. Defaults to `Exception`.
 
     Returns
     -------
-    str: return a new pattern if there is special characters that needs to escape.
+    re.Pattern
+        The compiled regex pattern object if validation succeeds.
 
     Raises
     ------
-    EscapePatternError: if error during validating pattern.
+    Exception
+        If the pattern is invalid and cannot be compiled. The raised
+        exception type is `exception_cls`.
+    """
+    exception_cls = exception_cls or Exception
+    try:
+        return re.compile(pattern, flags=flags)
+    except re.error as ex:
+        raise exception_cls(f"{type(ex).__name__} - {ex}") from ex
+
+
+def do_soft_regex_escape(pattern: str, is_validated: bool = True) -> str:
+    """
+    Escape special characters in a regex pattern string.
+
+    This function provides a "soft" escape mechanism that ensures
+    consistency across Python versions when invoking `re.escape`.
+    It selectively escapes characters that are meaningful in regex
+    syntax while leaving harmless punctuation unchanged.
+
+    Parameters
+    ----------
+    pattern : str
+        The input regex pattern string to escape.
+    is_validated : bool, default True
+        Whether to validate the escaped pattern using `validate_pattern`.
+        If True, raises `EscapePatternError` on invalid patterns.
+
+    Returns
+    -------
+    str
+        A new regex pattern string with special characters escaped.
+
+    Raises
+    ------
+    EscapePatternError
+        If validation fails when `is_validated=True`.
+
+    Notes
+    -----
+    - Characters in `string.punctuation` and whitespace are checked.
+    - Regex metacharacters (e.g., `^`, `$`, `.`, `?`, `*`, `+`, `|`,
+      `{}`, `[]`, `()`, `\\`) are always escaped.
+    - Other punctuation is left as‑is for readability.
     """
     pattern = str(pattern)
-    chk1, chk2 = string.punctuation + ' ', '^$.?*+|{}[]()\\'
+
+    all_punct_or_space = string.punctuation + " "
+    special_regex_chars = "^$.?*+|{}[]()\\"
+
     result = []
     for char in pattern:
-        echar = re.escape(char)
-        if char in chk1:
-            result.append(echar if char in chk2 else char)
+        escaped = re.escape(char)
+        if char in all_punct_or_space:
+            result.append(escaped if char in special_regex_chars else char)
         else:
-            result.append(echar)
-    new_pattern = ''.join(result)
-    is_validated and validate_pattern(new_pattern, exception_cls=EscapePatternError)
+            result.append(escaped)
+
+    new_pattern = "".join(result)
+
+    if is_validated:
+        validate_pattern(new_pattern, exception_cls=EscapePatternError)
+
     return new_pattern
 
 
