@@ -52,6 +52,8 @@ from regexapp.exceptions import MultilinePatternError
 from regexapp.exceptions import PatternBuilderError
 from regexapp.config import Data
 
+import regexapp.utils as utils
+
 from genericlib import File
 from genericlib.text import WHITESPACE_CHARS
 from genericlib.text import Line
@@ -250,25 +252,38 @@ class VarCls:
 
 
 class PatternReference(dict):
-    """Use to load regular expression pattern from system_references.yaml
-    or/and user_references.yaml
+    """
+    Dictionary-like container for managing regular expression patterns.
 
-    Attribute
-    ---------
-    sys_ref_loc (str): a system references file name.
-    user_ref_loc (str): a user references file name.
+    This class is used to load and store regex patterns defined in
+    `system_references.yaml` and/or `user_references.yaml`. It provides
+    utility methods for loading references, retrieving pattern layouts,
+    validating input against patterns, and testing content.
+
+    Attributes
+    ----------
+    sys_ref_loc : str
+        Path to the system references YAML file.
+    user_ref_loc : str
+        Path to the user references YAML file.
 
     Methods
     -------
     load_reference(filename) -> None
-    PatternReference.get_pattern_layout(name) -> str
+        Load regex patterns from the specified YAML file into the reference
+        dictionary.
+    get_pattern_layout(name) -> str
+        Retrieve the layout string for a given pattern name.
     is_violated(dict_obj) -> bool
-    test(self, content) -> bool
+        Check whether the provided dictionary violates any stored pattern rules.
+    test(content) -> bool
+        Test whether the given content matches the stored patterns.
 
     Raises
     ------
-    PatternReferenceError: raise exception if filename doesn't exist or
-            an invalid format
+    PatternReferenceError
+        Raised if the reference file does not exist, cannot be read, or
+        contains an invalid format.
     """
 
     # regexp pattern - from system references
@@ -284,9 +299,9 @@ class PatternReference(dict):
         self.violated_format = ''
 
     def load_sys_ref(self):
-        with open(self.sys_ref_loc) as stream:
-            yaml_obj = yaml.safe_load(stream)
-            self.update(yaml_obj)
+
+        yaml_obj = utils.File.safe_load_yaml(self.sys_ref_loc)
+        self.update(yaml_obj)
 
     def load_reference(self, filename, is_warning=True):
         """Load reference from YAML references file.
@@ -314,26 +329,24 @@ class PatternReference(dict):
                 raise PatternReferenceError(msg)
 
         try:
-            with open(filename) as stream:
-                yaml_obj = yaml.safe_load(stream)
+            yaml_obj = utils.File.safe_load_yaml(filename)
+            if not yaml_obj:
+                return
 
-                if not yaml_obj:
-                    return
+            if not isinstance(yaml_obj, dict):
+                fmt = '{} must be structure as dictionary.'
+                raise PatternReferenceError(fmt.format(filename))
 
-                if not isinstance(yaml_obj, dict):
-                    fmt = '{} must be structure as dictionary.'
-                    raise PatternReferenceError(fmt.format(filename))
-
-                for key, value in yaml_obj.items():
-                    if key not in self:
+            for key, value in yaml_obj.items():
+                if key not in self:
+                    self[key] = value
+                else:
+                    if key == 'datetime':
                         self[key] = value
                     else:
-                        if key == 'datetime':
-                            self[key] = value
-                        else:
-                            fmt = ('%r key is already existed.  '
-                                   'Wont update %r data to key.')
-                            is_warning and logger.warning(fmt, key, value)
+                        fmt = ('%r key is already existed.  '
+                               'Wont update %r data to key.')
+                        is_warning and logger.warning(fmt, key, value)
         except Exception as ex:
             msg = '{} - {}'.format(type(ex).__name__, ex)
             raise PatternReferenceError(msg)
@@ -385,14 +398,13 @@ class PatternReference(dict):
         -------
         bool: True there is a violation.
         """
-        with open(self.sys_ref_loc) as stream:
-            sys_ref = yaml.safe_load(stream)
-            fmt = '{} is ALREADY existed in system_references.yaml'
-            for name in dict_obj:
-                if 'datetime' not in name:
-                    if name in sys_ref:
-                        self.violated_format = fmt.format(name)
-                        return True
+        sys_ref = utils.File.safe_load_yaml(self.sys_ref_loc)
+        for name in dict_obj:
+            if 'datetime' not in name:
+                if name in sys_ref:
+                    msg = f'{name} is ALREADY existed in system_references.yaml'
+                    self.violated_format = msg
+                    return True
         return False
 
     def test(self, content):
@@ -444,9 +456,8 @@ class SymbolCls(dict):
     filename = Data.symbol_reference_filename
 
     def __init__(self):
-        with open(self.filename) as stream:
-            obj = yaml.safe_load(stream)
-            super().__init__(obj)
+        yaml_obj = utils.File.safe_load_yaml(self.filename)
+        super().__init__(yaml_obj)
 
 
 REF = PatternReference()
