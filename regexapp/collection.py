@@ -57,6 +57,7 @@ import regexapp.utils as utils
 from genericlib import File
 from genericlib.text import WHITESPACE_CHARS
 from genericlib.text import Line
+from genericlib.exceptions import raise_exception
 
 import logging
 logger = logging.getLogger(__file__)
@@ -98,7 +99,7 @@ def validate_pattern(
     try:
         return re.compile(pattern, flags=flags)
     except re.error as ex:
-        raise exception_cls(f"{type(ex).__name__} - {ex}") from ex
+        raise_exception(ex, cls=re.error)
 
 
 def do_soft_regex_escape(pattern: str, is_validated: bool = True) -> str:
@@ -348,8 +349,7 @@ class PatternReference(dict):
                                'Wont update %r data to key.')
                         is_warning and logger.warning(fmt, key, value)
         except Exception as ex:
-            msg = '{} - {}'.format(type(ex).__name__, ex)
-            raise PatternReferenceError(msg)
+            raise_exception(ex, cls=PatternReferenceError)
 
     @classmethod
     def get_pattern_layout(cls, name):
@@ -426,8 +426,7 @@ class PatternReference(dict):
         try:
             yaml_obj = yaml.safe_load(content)
         except Exception as ex:
-            msg = '{} - {}'.format(type(ex).__name__, ex)
-            raise PatternReferenceError(msg)
+            raise_exception(ex, cls=PatternReferenceError)
 
         if not yaml_obj:
             logger.warning('CANT test an empty content')
@@ -1617,8 +1616,9 @@ class ElementPattern(str):
                         re.compile(sub_pat)
                         cls._variable.pattern = sub_pat
                         new_pattern = '(?P<{}>{})'.format(name, sub_pat)
-                    except Exception as ex:     # noqa
+                    except Exception as ex:
                         new_pattern = '(?P<{}>{})'.format(name, pattern)
+                        raise_exception(ex, is_skipped=True)
             else:
                 new_pattern = '(?P<{}>{})'.format(name, pattern)
             return new_pattern

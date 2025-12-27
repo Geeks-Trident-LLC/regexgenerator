@@ -18,6 +18,8 @@ from io import IOBase
 import yaml
 from genericlib.constant import ECODE
 
+from genericlib.exceptions import raise_exception
+
 
 class File:
     """
@@ -95,7 +97,7 @@ class File:
             stream = open(filename, **kwargs)
             return stream
         except OSError as ex:
-            raise OSError(f"Failed to open file {filename}: {ex}") from ex
+            raise_exception(ex, msg=f"Failed to open file {filename}: {ex}")
 
     @classmethod
     def read(cls, filename: str, encoding: str="utf-8"):
@@ -254,4 +256,4 @@ class File:
         try:
             return yaml.safe_load(stream)
         except yaml.YAMLError as ex:
-            raise yaml.YAMLError(f"Failed to parse YAML file {filename}: {ex}")
+            raise_exception(ex, msg=f"Failed to parse YAML file {filename}: {ex}")
