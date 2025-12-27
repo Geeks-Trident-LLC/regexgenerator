@@ -99,7 +99,7 @@ def validate_pattern(
     try:
         return re.compile(pattern, flags=flags)
     except re.error as ex:
-        raise_exception(ex, cls=re.error)
+        raise_exception(ex, cls=exception_cls)
 
 
 def do_soft_regex_escape(pattern: str, is_validated: bool = True) -> str:
@@ -326,7 +326,7 @@ class PatternReference(dict):
                 File.create(filename)
                 File.copy_file(sample_file, filename)
             else:
-                msg = '{} is NOT FOUND.'.format(filename)
+                msg = f"File '{filename}' not found."
                 raise PatternReferenceError(msg)
 
         try:
@@ -335,8 +335,8 @@ class PatternReference(dict):
                 return
 
             if not isinstance(yaml_obj, dict):
-                fmt = '{} must be structure as dictionary.'
-                raise PatternReferenceError(fmt.format(filename))
+                msg = f"File '{filename}' must have a dictionary structure."
+                raise PatternReferenceError(msg)
 
             for key, value in yaml_obj.items():
                 if key not in self:
@@ -345,8 +345,8 @@ class PatternReference(dict):
                     if key == 'datetime':
                         self[key] = value
                     else:
-                        fmt = ('%r key is already existed.  '
-                               'Wont update %r data to key.')
+                        fmt = ("%r key already exists. "
+                               "Will not update data for key %r.")
                         is_warning and logger.warning(fmt, key, value)
         except Exception as ex:
             raise_exception(ex, cls=PatternReferenceError)
@@ -402,7 +402,7 @@ class PatternReference(dict):
         for name in dict_obj:
             if 'datetime' not in name:
                 if name in sys_ref:
-                    msg = f'{name} is ALREADY existed in system_references.yaml'
+                    msg = f"Keyword '{name}' already exists in system_references.yaml."
                     self.violated_format = msg
                     return True
         return False
@@ -425,23 +425,22 @@ class PatternReference(dict):
 
         try:
             yaml_obj = yaml.safe_load(content)
+            if not yaml_obj:
+                logger.warning("Skipping test: YAML content is empty or missing.")
+                self.test_result = 'not_tested'
+                return True
+
+            if not isinstance(yaml_obj, dict):
+                msg = "YAML content must be a dictionary structure."
+                raise PatternReferenceError(msg)
+
+            if self.is_violated(yaml_obj):
+                raise PatternReferenceError(self.violated_format)
+
+            self.test_result = 'tested'
+            return True
         except Exception as ex:
             raise_exception(ex, cls=PatternReferenceError)
-
-        if not yaml_obj:
-            logger.warning('CANT test an empty content')
-            self.test_result = 'not_tested'
-            return True
-
-        if not isinstance(yaml_obj, dict):
-            msg = 'content must be structure of dictionary.'
-            raise PatternReferenceError(msg)
-
-        if self.is_violated(yaml_obj):
-            raise PatternReferenceError(self.violated_format)
-
-        self.test_result = 'tested'
-        return True
 
 
 class SymbolCls(dict):
@@ -2357,8 +2356,8 @@ class MultilinePattern(str):
         elif isinstance(text, str):
             lines = re.split(r'\r\n|\r|\n', text)
         else:
-            'text argument must be string or list of string'
-            raise MultilinePatternError(text)
+            error = f"Argument 'text' must be a string or a list of strings.\n{text}"
+            raise MultilinePatternError(error)
 
         if lines:
             pattern = cls.get_pattern(
