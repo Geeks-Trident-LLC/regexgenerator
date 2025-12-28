@@ -11,14 +11,13 @@ error handling, formatting, and integration with YAML configuration
 files.
 """
 
-import sys
 from typing import Optional
 from io import IOBase
 
 import yaml
-from genericlib.constant import ECODE
 
 from genericlib.exceptions import raise_exception
+from genericlib.misc import sys_exit
 
 
 class File:
@@ -146,7 +145,7 @@ class File:
         Attempts to read the contents of the given file using `cls.read`.
         If an error occurs (e.g., file not found, permission denied, or
         encoding issues), the exception is printed to stderr and the
-        program terminates with `sys.exit(ECODE.BAD)`.
+        program terminates with exit code 1`.
 
         Parameters
         ----------
@@ -164,7 +163,7 @@ class File:
         ------
         Exception
             Always raised if any exception occurs while reading the file.
-            The exit code is `ECODE.BAD`.
+            The exit code is 1.
 
         Notes
         -----
@@ -177,8 +176,7 @@ class File:
             content = cls.read(filename, encoding=encoding)
             return content
         except Exception as ex:
-            print(f'*** {type(ex).__name__}: {ex}')
-            sys.exit(ECODE.BAD)
+            sys_exit(success=False, msg=f'*** {type(ex).__name__}: {ex}')
 
     @classmethod
     def write(cls, filename: str, content: str, encoding: str="utf-8"):

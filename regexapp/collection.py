@@ -40,7 +40,6 @@ from typing import Optional, Type
 
 import yaml
 import string
-from textwrap import dedent
 from copy import copy
 
 from regexapp.exceptions import EscapePatternError
@@ -57,6 +56,7 @@ import regexapp.utils as utils
 from genericlib import File
 from genericlib.text import WHITESPACE_CHARS
 from genericlib.text import Line
+from genericlib.text import dedent_and_strip
 from genericlib.exceptions import raise_exception
 
 import logging
@@ -412,7 +412,7 @@ class PatternReference(dict):
         str
             A YAML layout template string.
         """
-        layout1 = """
+        layout1 = dedent_and_strip("""
             name_placeholder:
               ##################################################################
               # double back flash must be used in a value of pattern if needed
@@ -425,8 +425,8 @@ class PatternReference(dict):
               #   change this positive test name: "replace_me -> (string or list of string)"
               # negative test:
               #   change this negative test name: "replace_me -> (string or list of string)"
-        """
-        layout2 = """
+        """)
+        layout2 = dedent_and_strip("""
             name_placeholder:
               ##################################################################
               # double back flash must be used in a value of format if needed
@@ -442,8 +442,8 @@ class PatternReference(dict):
               #   change this positive test name: "replace_me -> (string or list of string)"
               # negative test:
               #   change this negative test name: "replace_me -> (string or list of string)"
-        """
-        layout1, layout2 = dedent(layout1).strip(), dedent(layout2).strip()
+        """)
+
         return layout2 if 'datetime' in name else layout1
 
     def is_violated(self, dict_obj: dict) -> bool:

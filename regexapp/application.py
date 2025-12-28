@@ -29,16 +29,23 @@ try:
 except ModuleNotFoundError:
     import sys
     from platform import python_version as py_version
+    from genericlib.misc import sys_exit
 
-    items = ["Failed to launch RegexBuilder application because",
-             "Python{} binary doesn't have tkinter module.".format(
-                 py_version()),
-             "Please install tkinter module and try it again."]
+    items = [
+        "RegexBuilder application failed to start.",
+        f"Python {py_version()} was detected without the tkinter module.",
+        "Install tkinter to enable GUI support and retry."
+    ]
+
+    # Determine the maximum item length
     max_len = max(len(item) for item in items)
-    txt = '\n'.join('| {} |'.format(item.ljust(max_len)) for item in items)
-    txt = '+-{0}-+\n{1}\n+-{0}-+'.format(max_len * '-', txt)
-    print(txt)
-    sys.exit(1)
+    # Build the horizontal border
+    border = f"+-{'-' * max_len}-+"
+    # Build the table rows
+    rows = [f"| {item.ljust(max_len)} |" for item in items]
+    # Combine everything into the final framed text
+    txt = "\n".join([border] + rows + [border])
+    sys_exit(success=False, msg=txt)
 except Exception as exc:
     raise exc
 
@@ -48,7 +55,6 @@ from tkinter import messagebox
 from tkinter.font import Font
 from pathlib import Path
 import webbrowser
-from textwrap import dedent
 from regexapp import RegexBuilder
 from regexapp.collection import REF
 from regexapp.collection import PatternReference
@@ -63,6 +69,7 @@ import regexapp.ui as ui
 import regexapp.utils as utils
 
 from genericlib import DotObject
+from genericlib.text import dedent_and_strip
 
 import yaml
 import re
@@ -505,13 +512,16 @@ class Application:
         if self.is_confirmed:
             title = 'Switching To Pattern Builder App'
             yesnocancel = """
-                Leaving Regex Builder App.
-                "Yes" will switch app and will show confirmation.
-                "No" will switch app and wont show confirmation.
-                "Cancel" wont switch app.
-                Do you want to switch app?
+                You are about to leave the Regex Builder App.
+    
+                - Yes: Switch to the other app and show a confirmation.
+                - No: Switch to the other app without showing a confirmation.
+                - Cancel: Stay in the current app.
+    
+                Do you want to switch?
             """
-            yesnocancel = dedent(yesnocancel).strip()
+
+            yesnocancel = dedent_and_strip(yesnocancel)
             result = create_msgbox(title=title, yesnocancel=yesnocancel)
             if result is None:
                 self.builder_checkbox_var.set(not self.builder_checkbox_var.get())
@@ -580,13 +590,16 @@ class Application:
         if self.is_confirmed:
             title = 'Switching To Regex Builder App'
             yesnocancel = """
-                Leaving Pattern Builder App.
-                "Yes" will switch app and will show confirmation.
-                "No" will switch app and wont show confirmation.
-                "Cancel" wont switch app.
-                Do you want to switch app?
+                You are about to leave the Pattern Builder App.
+    
+                - Yes: Switch to the Regex Builder App and show a confirmation.
+                - No: Switch to the Regex Builder App without showing a confirmation.
+                - Cancel: Stay in the Pattern Builder App.
+    
+                Do you want to switch?
             """
-            yesnocancel = dedent(yesnocancel).strip()
+
+            yesnocancel = dedent_and_strip(yesnocancel)
             result = create_msgbox(title=title, yesnocancel=yesnocancel)
             if result is None:
                 self.builder_checkbox_var.set(not self.builder_checkbox_var.get())
@@ -1688,7 +1701,7 @@ class Application:
         fn = Data.user_reference_filename
         file_obj = Path(fn)
         if not file_obj.exists():
-            question = '{!r} IS NOT EXISTED.\nDo you want to create?'.format(fn)
+            question = f'{repr(fn)} file does not exist.\nWould you like to create it?'
             result = create_msgbox(question=question)
             if result == 'yes':
                 parent = file_obj.parent
@@ -1991,7 +2004,7 @@ class Application:
             if not user_data:
                 create_msgbox(
                     title='Empty Data',
-                    error="Can NOT build regex pattern without data."
+                    error = "Regex pattern cannot be built: no input data provided."
                 )
                 return
 
@@ -2029,7 +2042,7 @@ class Application:
                         self.save_as_btn.config(state=tk.NORMAL)
                         self.copy_text_btn.config(state=tk.NORMAL)
                     else:
-                        error = 'Something wrong with RegexBuilder.  Please report bug.'
+                        error = "An error occurred in RegexBuilder. Please report this bug."
                         create_msgbox(title='RegexBuilder Error', error=error)
                 except Exception as ex:
                     error = '{}: {}'.format(type(ex).__name__, ex)
@@ -2097,9 +2110,10 @@ class Application:
             if self.snapshot.test_data is None:
                 create_msgbox(
                     title='No Test Data',
-                    error=("Can NOT build Python test script without "
-                           "test data.\nPlease use Open or Paste button "
-                           "to load test data")
+                    error=(
+                        "Cannot build Python test script without test data.\n"
+                        "Please use the Open or Paste button to load test data."
+                    )
                 )
                 return
 
@@ -2107,7 +2121,7 @@ class Application:
             if not user_data:
                 create_msgbox(
                     title='Empty Data',
-                    error="Can NOT build Python test script without data."
+                    error = "Python test script generation failed: no input data provided."
                 )
                 return
 
@@ -2136,9 +2150,10 @@ class Application:
             if self.snapshot.test_data is None:
                 create_msgbox(
                     title='No Test Data',
-                    error=("Can NOT build Python Unittest script without "
-                           "test data.\nPlease use Open or Paste button "
-                           "to load test data")
+                    error=(
+                        "Cannot build Python unittest script without test data.\n"
+                        "Please use the Open or Paste button to load test data."
+                    )
                 )
                 return
 
@@ -2146,7 +2161,7 @@ class Application:
             if not user_data:
                 create_msgbox(
                     title='Empty Data',
-                    error="Can NOT build Python Unittest script without data."
+                    error = "Unittest script generation failed: no input data provided."
                 )
                 return
 
@@ -2175,9 +2190,10 @@ class Application:
             if self.snapshot.test_data is None:
                 create_msgbox(
                     title='No Test Data',
-                    error=("Can NOT build Python Pytest script without "
-                           "test data.\nPlease use Open or Paste button "
-                           "to load test data")
+                    error=(
+                        "Cannot build Python pytest script without test data.\n"
+                        "Please use the Open or Paste button to load test data."
+                    )
                 )
                 return
 
@@ -2185,7 +2201,7 @@ class Application:
             if not user_data:
                 create_msgbox(
                     title='Empty Data',
-                    error="Can NOT build Python Pytest script without data."
+                    error = "Pytest script generation failed: no input data provided."
                 )
                 return
 
@@ -2214,7 +2230,7 @@ class Application:
             if self.snapshot.test_data is None:
                 create_msgbox(
                     title='No Test Data',
-                    error="Please use Open or Paste button to load test data"
+                    error = "Test data is required. Use the Open or Paste button to load it."
                 )
                 return
 

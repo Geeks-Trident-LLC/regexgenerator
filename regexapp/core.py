@@ -66,7 +66,6 @@ from datetime import datetime
 from copy import copy, deepcopy
 from collections import OrderedDict
 from textwrap import indent
-from textwrap import dedent
 
 from regexapp import LinePattern
 from regexapp import MultilinePattern
@@ -76,6 +75,9 @@ from regexapp.exceptions import PatternReferenceError
 from regexapp.collection import REF
 import regexapp
 import regexapp.utils as utils
+
+from genericlib.text import dedent_and_strip
+
 
 BASELINE_REF = deepcopy(REF)
 
@@ -309,7 +311,7 @@ class RegexBuilder:
 
         Parameters
         ----------
-        **kwargs : dict
+        **kwargs : keyword arguments
             Arbitrary keyword arguments representing named data inputs.
             Each value must be either:
             - str: a single string of data
@@ -329,7 +331,7 @@ class RegexBuilder:
             elements.
         """
         if not kwargs:
-            msg = 'CANT validate data without providing data.'
+            msg = "Data validation failed: no data provided."
             raise RegexBuilderError(msg)
 
         is_validated = True
@@ -394,7 +396,7 @@ class RegexBuilder:
         self.__class__.validate_data(user_data=data)    # noqa
 
         if not data:
-            self.test_report = 'CANT build regex pattern with an empty data.'
+            self.test_report = "Regex pattern generation failed: no data provided."
             print(self.test_report)
             return
 
@@ -485,7 +487,7 @@ class RegexBuilder:
         self.__class__.validate_data(test_data=data)    # noqa
 
         if not data:
-            self.test_report = 'CANT run test with an empty data.'
+            self.test_report = "Test execution failed: no data provided."
             showed and print(self.test_report)
             return False
 
@@ -728,8 +730,8 @@ def remove_reference(name=''):
       configuration rather than being deleted outright.
     """
     if not name:
-        fmt = '{} keyword can not be empty name.'
-        PatternReferenceError(fmt.format(name))
+        error = f"Keyword '{name}' must have a non-empty name."
+        raise PatternReferenceError(error)
 
     if name in REF:
         if name not in BASELINE_REF:
@@ -738,12 +740,12 @@ def remove_reference(name=''):
             if name == 'datetime':
                 REF['datetime'] = deepcopy(BASELINE_REF['datetime'])
             else:
-                fmt = ('CANT remove {!r} from system_references.yaml '
-                       'or user_references.yaml')
-                raise PatternReferenceError(fmt.format(name))
+                error = (f"Keyword {repr(name)} cannot be removed from "
+                         f"system_references.yaml or user_references.yaml.")
+                raise PatternReferenceError(error)
     else:
-        fmt = 'CANT remove {!r} keyword because it does not exist.'
-        raise PatternReferenceError(fmt.format(name))
+        error = f"Keyword {repr(name)} cannot be removed because it does not exist."
+        raise PatternReferenceError(error)
 
 
 class DynamicTestScriptBuilder:
@@ -949,7 +951,8 @@ class DynamicTestScriptBuilder:
         test_data_pattern_table = testable.test_data_pattern_table
 
         if not test_data_pattern_table and not user_data_pattern_table:
-            raise RegexBuilderError('No prepared_data to build test script')
+            error = "Test script generation failed: no prepared data provided."
+            raise RegexBuilderError(error)
 
         for test_data, pattern in test_data_pattern_table.items():
             test_name = self.generate_test_name(test_data=test_data)
@@ -1217,7 +1220,7 @@ class UnittestBuilder:
         - Metadata is embedded via `self.module_docstring`, generated
           during initialization of the builder.
         """
-        tmpl = """
+        tmpl = dedent_and_strip("""
           {module_docstring}
 
           import unittest
@@ -1228,8 +1231,7 @@ class UnittestBuilder:
                   super().__init__(test_name)
                   self.test_data = test_data
                   self.pattern = pattern
-        """
-        tmpl = dedent(tmpl).strip()
+        """)
 
         tc_gen = self.tc_gen
         partial_script = tmpl.format(
@@ -1277,12 +1279,11 @@ class UnittestBuilder:
           and guaranteed to be a valid Python identifier.
         - Duplicate method definitions are skipped to prevent redundancy.
         """
-        tmpl = """
+        tmpl = dedent_and_strip("""
             def {test_name}(self):
                 result = re.search(self.pattern, self.test_data)
                 self.assertIsNotNone(result)
-        """
-        tmpl = dedent(tmpl).strip()
+        """)
 
         tc_gen = self.tc_gen
         lst = []
@@ -1346,7 +1347,7 @@ class UnittestBuilder:
           discoverable and executable by the unittest framework.
         """
 
-        tmpl = """
+        tmpl = dedent_and_strip("""
             def load_tests(loader, tests, pattern):
                 test_cases = unittest.TestSuite()
                 
@@ -1361,10 +1362,9 @@ class UnittestBuilder:
                     )
                     test_cases.addTest(testcase)
                 return test_cases
-        """
-        tmpl = dedent(tmpl).strip()
+        """)
 
-        tmpl_data = """
+        tmpl_data = dedent_and_strip("""
             arguments.append(
                 (
                     {test_name},    # test name
@@ -1372,8 +1372,7 @@ class UnittestBuilder:
                     r{pattern}   # pattern
                 )
             )
-        """
-        tmpl_data = dedent(tmpl_data).strip()
+        """)
 
         tc_gen = self.tc_gen
         lst = ['arguments = list()']
@@ -1497,7 +1496,7 @@ class PytestBuilder:
           produces the script text.
         """
 
-        tmpl = """
+        tmpl = dedent_and_strip("""
             {module_docstring}
             
             import pytest
@@ -1513,16 +1512,14 @@ class PytestBuilder:
                 def {test_name}(self, test_data, pattern):
                     result = re.search(pattern, test_data)
                     assert result is not None
-        """
-        tmpl = dedent(tmpl).strip()
+        """)
 
-        tmpl_data = """
+        tmpl_data = dedent_and_strip("""
             (
                 {test_data},    # test data
                 r{pattern}   # pattern
             ),
-        """
-        tmpl_data = dedent(tmpl_data).strip()
+        """)
 
         tc_gen = self.tc_gen
         lst = []
@@ -1650,7 +1647,7 @@ class PythonSnippetBuilder:
           the script text.
         """
 
-        tmpl = '''
+        tmpl = dedent_and_strip('''
             {module_docstring}
 
             import re
@@ -1685,8 +1682,7 @@ class PythonSnippetBuilder:
 
             # function call
             test_regex(test_data, pattern)
-        '''
-        tmpl = dedent(tmpl).strip()
+        ''')
 
         test_script = tmpl.format(
             module_docstring=self.module_docstring,
@@ -1707,7 +1703,7 @@ class PythonSnippetBuilder:
         -------
         str: a python test script
         """
-        tmpl = '''
+        tmpl = dedent_and_strip('''
             {module_docstring}
             
             import re
@@ -1747,8 +1743,7 @@ class PythonSnippetBuilder:
             
             # function call
             test_regex(test_data, patterns)
-        '''
-        tmpl = dedent(tmpl).strip()
+        ''')
 
         lst = []
         for pattern in patterns:
@@ -1772,7 +1767,7 @@ class PythonSnippetBuilder:
         -------
         str: a python test script
         """
-        tmpl = '''
+        tmpl = dedent_and_strip('''
             {module_docstring}
             
             import re
@@ -1804,8 +1799,7 @@ class PythonSnippetBuilder:
             
             # function call
             test_regex(test_data, pattern)
-        '''
-        tmpl = dedent(tmpl).strip()
+        ''')
         test_script = tmpl.format(
             module_docstring=self.module_docstring,
             test_data=test_data, pattern=pattern
