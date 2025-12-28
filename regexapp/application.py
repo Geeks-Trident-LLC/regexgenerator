@@ -1060,13 +1060,14 @@ class Application:
             ('All Files', '*'),
         ]
         filename = filedialog.askopenfilename(filetypes=filetypes)
-        content = utils.File.read(filename)
-        if not self.is_pattern_builder_app:
-            self.test_data_btn.config(state=tk.NORMAL)
-            self.test_data_btn_var.set('Test Data')
-            self.set_textarea(self.result_textarea, '')
-            self.snapshot.update(test_data=content)
-        self.set_textarea(self.input_textarea, content, title=filename)
+        if filename:
+            content = utils.File.read(filename)
+            if not self.is_pattern_builder_app:
+                self.test_data_btn.config(state=tk.NORMAL)
+                self.test_data_btn_var.set('Test Data')
+                self.set_textarea(self.result_textarea, '')
+                self.snapshot.update(test_data=content)
+            self.set_textarea(self.input_textarea, content, title=filename)
 
     def callback_help_documentation(self):
         """
