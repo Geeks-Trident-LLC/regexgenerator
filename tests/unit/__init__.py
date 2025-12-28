@@ -11,8 +11,7 @@ Usage
 - Decorate helper functions with `@dedent_and_strip_data` to guarantee
   consistent string formatting across tests.
 """
-
-
+import subprocess
 from datetime import datetime
 from pathlib import Path, PurePath
 from textwrap import dedent
@@ -88,3 +87,30 @@ def normalize_string_output(func):
         return result
     return wrapper
 
+
+def get_package_info(pkg_name: str) -> str:
+    """
+    Retrieve package information from `pip freeze`.
+
+    Parameters
+    ----------
+    pkg_name : str
+        The name of the package to search for.
+
+    Returns
+    -------
+    str
+        The matching package specification (e.g., "pkg==1.2.3") if found.
+        Otherwise, returns the full `pip freeze` output.
+    """
+    try:
+        output = subprocess.check_output(
+            ["pip", "freeze"], stderr=subprocess.STDOUT, text=True
+        )
+    except subprocess.CalledProcessError as e:
+        return f"Error running pip freeze: {e.output}"
+
+    # Find lines that start with the package name (case-insensitive match optional)
+    matches = [line.strip() for line in output.splitlines() if line.startswith(pkg_name)]
+
+    return matches[0] if matches else output
