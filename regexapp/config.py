@@ -40,7 +40,7 @@ from genericlib import File
 
 import regexapp.utils as utils
 
-__version__ = '0.5.1a1'
+__version__ = '0.5.1a2'
 version = __version__
 __edition__ = 'Community'
 edition = __edition__
