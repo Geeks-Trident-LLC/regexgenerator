@@ -24,30 +24,9 @@ Notes
   GUI
 """
 
-try:
-    import tkinter as tk
-except ModuleNotFoundError:
-    import sys
-    from platform import python_version as py_version
-    from genericlib.misc import sys_exit
+from genericlib.misc import ensure_tkinter_available
 
-    items = [
-        "RegexBuilder application failed to start.",
-        f"Python {py_version()} was detected without the tkinter module.",
-        "Install tkinter to enable GUI support and retry."
-    ]
-
-    # Determine the maximum item length
-    max_len = max(len(item) for item in items)
-    # Build the horizontal border
-    border = f"+-{'-' * max_len}-+"
-    # Build the table rows
-    rows = [f"| {item.ljust(max_len)} |" for item in items]
-    # Combine everything into the final framed text
-    txt = "\n".join([border] + rows + [border])
-    sys_exit(success=False, msg=txt)
-except Exception as exc:
-    raise exc
+tk = ensure_tkinter_available(app_name="Regexapp")
 
 from tkinter import ttk
 from tkinter import filedialog
